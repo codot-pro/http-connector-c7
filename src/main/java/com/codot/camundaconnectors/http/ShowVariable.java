@@ -1,4 +1,4 @@
-package com.codot.camundaconnectors.filestorage;
+package com.codot.camundaconnectors.http;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;

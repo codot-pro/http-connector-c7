@@ -1,0 +1,221 @@
+{
+  "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+  "name": "http-connector",
+  "id": "com.codot.camundaconnectors.http.c7",
+  "description": "CODOT HTTP Connector",
+  "version": 1,
+  "entriesVisible": false,
+  "appliesTo": [
+    "bpmn:ServiceTask"
+  ],
+  "elementType": {
+    "value": "bpmn:ServiceTask"
+  },
+  "groups": [
+    {
+      "id": "inputs",
+      "label": "Input Mapping"
+    },
+    {
+      "id": "output",
+      "label": "Output Mapping"
+    }
+  ],
+  "properties": [
+    {
+      "label": "Implementation Type",
+      "type": "Hidden",
+      "value": "com.codot.camundaconnectors.http.HttpFunction",
+      "editable": false,
+      "binding": {
+        "type": "property",
+        "name": "camunda:class"
+      }
+    },
+
+
+	 {
+      "label": "Method",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "POST",
+          "value": "POST"
+        },
+        {
+          "name": "GET",
+          "value": "GET"
+        },
+        {
+          "name": "DELETE",
+          "value": "DELETE"
+        }
+      ],
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "method"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "group": "inputs"
+    },
+
+
+    {
+      "label": "URL",
+      "type": "String",
+      "feel": "required",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "url"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "group": "inputs"
+    },
+
+
+    {
+      "label": "Headers",
+      "type": "String",
+      "feel": "required",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "headers"
+      },
+      "group": "inputs"
+    },
+
+
+    {
+      "label": "Timeout",
+      "type": "String",
+      "feel": "required",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "timeout"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "group": "inputs"
+    },
+
+
+    {
+      "label": "Payload",
+      "type": "String",
+      "feel": "required",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "payload"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "group": "inputs"
+    },
+
+
+    {
+      "label": "File name",
+      "type": "String",
+      "feel": "required",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "response_file_name"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "group": "inputs"
+    },
+
+
+	 {
+      "label": "Base64 decode",
+		"feel": "required",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "base64decode"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+		"type": "Dropdown",
+      "choices": [
+        {
+          "name": "TRUE",
+          "value": "true"
+        },
+        {
+          "name": "FALSE",
+          "value": "FALSE"
+        }
+      ],
+      "group": "inputs"
+    },
+
+
+    {
+      "label": "status code",
+      "description": "Name of variable to store the response in",
+      "group": "output",
+      "type": "String",
+      "constraints": {
+        "notEmpty": true
+      },
+      "binding": {
+        "type": "camunda:outputParameter",
+        "source": "${status_code}"
+      }
+    },
+
+
+    {
+      "label": "status massage",
+      "description": "Name of variable to store the response in",
+      "group": "output",
+      "type": "String",
+      "constraints": {
+        "notEmpty": true
+      },
+      "binding": {
+        "type": "camunda:outputParameter",
+        "source": "${status_msg}"
+      }
+    },
+
+
+    {
+      "label": "response body",
+      "description": "Name of variable to store the response in",
+      "group": "output",
+      "type": "String",
+      "constraints": {
+        "notEmpty": true
+      },
+      "binding": {
+        "type": "camunda:outputParameter",
+        "source": "${response_body}"
+      }
+    },
+
+
+    {
+      "label": "response file path",
+      "description": "Name of variable to store the response in",
+      "group": "output",
+      "type": "String",
+      "constraints": {
+        "notEmpty": true
+      },
+      "binding": {
+        "type": "camunda:outputParameter",
+        "source": "${response_file_path}"
+      }
+    }
+  ]
+}
