@@ -3,7 +3,6 @@ package com.codot.camundaconnectors.http;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Jsoup;
@@ -21,34 +20,48 @@ import java.util.Map;
 public class HttpFunction implements JavaDelegate {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpFunction.class);
 
-	@Override
-	public void execute(DelegateExecution delegateExecution) throws Exception {
+	String status_code = "";
+	String status_msg = "";
+	String response_body = "";
+	String response_file_path = "";
 
-		String method = (String) delegateExecution.getVariable("method");
+	@Override
+	public void execute(DelegateExecution delegateExecution) {
 		String url = (String) delegateExecution.getVariable("url");
-		Map<String, String> headers = parseHeaders((String) delegateExecution.getVariable("headers")); // map
 		int timeout = Integer.parseInt((String) delegateExecution.getVariable("timeout"));
 		String payload = (String) delegateExecution.getVariable("payload");
 		String fileName = (String) delegateExecution.getVariable("response_file_name");
+		boolean needDecode = Boolean.parseBoolean((String) delegateExecution.getVariable("base64decode"));
 
-		String status_code = "";
-		String status_msg = "";
-		String response_body = "";
-		String response_file_path = "";
+		Map<String, String> headers = null;
+		try {
+			String headersString = (String) delegateExecution.getVariable("headers");
+			if (headersString != null)
+				headers = Utility.parseHeaders(headersString);
+		} catch (JSONException e){
+			status_code = "400";
+			status_msg = "Bad request. Invalid headers";
+			packRespond(delegateExecution);
+			return;
+		}
 
-		Method req_method;
-		switch (method) {
-			case "GET" -> req_method = Connection.Method.GET;
-			case "POST" -> req_method = Connection.Method.POST;
-			case "PUT" -> req_method = Connection.Method.PUT;
-			default -> throw new Exception("req method is wrong"); // todo code + msg
+		Method method;
+		switch ((String) delegateExecution.getVariable("method")) {
+			case "GET": method = Connection.Method.GET; break;
+			case "POST": method = Connection.Method.POST; break;
+			case "PUT": method = Connection.Method.PUT; break;
+			default:
+				status_code = "400";
+				status_msg = "Bad request. Invalid method";
+				packRespond(delegateExecution);
+				return;
 		}
 
 		Connection.Response response;
 		try {
 			response = Jsoup.connect(url)
-					.headers(headers)
-					.method(req_method)
+					.headers(headers == null ? new HashMap<>() : headers)
+					.method(method)
 					.requestBody(payload)
 					.timeout(timeout)
 					.ignoreContentType(true)
@@ -59,10 +72,12 @@ public class HttpFunction implements JavaDelegate {
 			status_msg = response.statusMessage();
 			byte[] response_bytes = response.bodyAsBytes();
 			String response_string = new String(response_bytes, StandardCharsets.UTF_8);
-			if (isValid(response_string)){
+
+			if (Utility.isValid(response_string)){
 				response_body = response_string;
 			}
 			else {
+				if (needDecode){ response_bytes = Utility.base64Decode(response_bytes); }
 				File file = new File(System.getProperty("java.io.tmpdir"), fileName);
 				new FileOutputStream(file).write(response_bytes);
 				response_file_path = file.getAbsolutePath();
@@ -79,49 +94,13 @@ public class HttpFunction implements JavaDelegate {
 				status_code = "500";
 			}
 		}
-		JSONObject result = new JSONObject("{}");
-		result.append("status_code", status_code);
-		result.append("status_msg", status_msg);
-		result.append("response_body", response_body);
-		result.append("response_file_path", response_file_path);
+		packRespond(delegateExecution);
 	}
 
-	public static boolean isValid(String json) {
-		try {
-			new JSONObject(json);
-		} catch (JSONException e) {
-			return false;
-		}
-		return true;
+	private void packRespond(DelegateExecution delegateExecution){
+		delegateExecution.setVariable("status_code", status_code);
+		delegateExecution.setVariable("status_msg", status_msg);
+		delegateExecution.setVariable("response_body", response_body);
+		delegateExecution.setVariable("response_file_path", response_file_path);
 	}
-
-	private static Map<String, String> parseHeaders(String json){
-		JSONObject jsonObject;
-		if (isValid(json)){
-			jsonObject = new JSONObject(json);
-			Map<String, String> transformedMap = new HashMap<>();
-			for (Map.Entry<String, Object> entry : jsonObject.toMap().entrySet()) {
-				String key = entry.getKey();
-				String value = entry.getValue().toString();
-				transformedMap.put(key, value);
-			}
-			return transformedMap;
-		}
-		throw new JSONException("headers is`t valid");
-	}
-
-//	function print_log(msg) {
-//		var time_stamp = time_format(new Date(Date.now()));
-//
-//		var repository_service = execution.getProcessEngineServices().getRepositoryService();
-//		var process_definition = repository_service.getProcessDefinition(execution.getProcessDefinitionId());
-//		var source_line = process_definition.getKey() + ":" + process_definition.getVersion() + ":" + execution.getCurrentActivityName();
-//
-//		var log_line = time_stamp + " INFO [" + source_line + "]: " + msg;
-//
-//		var PrintStream = new java.io.PrintStream(java.lang.System.out, true, "UTF-8");
-//		PrintStream.println(log_line);
-//
-//		return log_line;
-//	}
 }
