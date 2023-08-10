@@ -37,6 +37,7 @@
 	 {
       "label": "Method",
       "type": "Dropdown",
+		"value": "GET",
       "choices": [
         {
           "name": "POST",
@@ -79,8 +80,9 @@
 
     {
       "label": "Headers",
-      "type": "String",
+      "type": "Text",
       "feel": "required",
+		"value": "{\"Content-Type\":\"application/json\"}",
       "binding": {
         "type": "camunda:inputParameter",
         "name": "headers"
@@ -93,6 +95,7 @@
       "label": "Timeout",
       "type": "String",
       "feel": "required",
+		"value": "60000",
       "binding": {
         "type": "camunda:inputParameter",
         "name": "timeout"
@@ -106,14 +109,11 @@
 
     {
       "label": "Payload",
-      "type": "String",
+      "type": "Text",
       "feel": "required",
       "binding": {
         "type": "camunda:inputParameter",
         "name": "payload"
-      },
-      "constraints": {
-        "notEmpty": true
       },
       "group": "inputs"
     },
@@ -141,6 +141,7 @@
         "type": "camunda:inputParameter",
         "name": "base64decode"
       },
+		"value": "false",
       "constraints": {
         "notEmpty": true
       },
@@ -152,7 +153,7 @@
         },
         {
           "name": "FALSE",
-          "value": "FALSE"
+          "value": "false"
         }
       ],
       "group": "inputs"
@@ -164,6 +165,7 @@
       "description": "Name of variable to store the response in",
       "group": "output",
       "type": "String",
+		"value": "status_code",
       "constraints": {
         "notEmpty": true
       },
@@ -179,6 +181,7 @@
       "description": "Name of variable to store the response in",
       "group": "output",
       "type": "String",
+		"value": "status_msg",
       "constraints": {
         "notEmpty": true
       },
@@ -194,6 +197,7 @@
       "description": "Name of variable to store the response in",
       "group": "output",
       "type": "String",
+		"value": "response_body",
       "constraints": {
         "notEmpty": true
       },
@@ -209,6 +213,7 @@
       "description": "Name of variable to store the response in",
       "group": "output",
       "type": "String",
+		"value": "response_file_path",
       "constraints": {
         "notEmpty": true
       },
