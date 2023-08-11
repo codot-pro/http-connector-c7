@@ -1,8 +1,11 @@
 # Camunda 7 HTTP connector
 HTTP Connector for Camunda 7
-jkd 1.8
 
-## Deploying the FileService Connector
+### Recommended Requirement:
+- Maven: latest or 3.3.*+
+- JDK:   1.8 (52)
+
+## Deploying the HTTP Connector
 
 ```bash
 git clone https://github.com/codot-pro/http-connector-c7
@@ -58,7 +61,7 @@ Reload the application, and you will be able to assign a template.
 - File name
   - Must always be specified
   - If the response is not a file, then the response will be written to the **response body**
-
+  
 ### Output data
 
 > It is important to fill in **all fields**
