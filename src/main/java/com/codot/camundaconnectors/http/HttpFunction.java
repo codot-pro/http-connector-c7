@@ -33,7 +33,6 @@ public class HttpFunction implements JavaDelegate {
 		int timeout = Integer.parseInt((String) delegateExecution.getVariable("timeout"));
 		String payload = (String) delegateExecution.getVariable("payload");
 		String fileName = (String) delegateExecution.getVariable("response_file_name");
-		boolean needDecode = Boolean.parseBoolean((String) delegateExecution.getVariable("base64decode"));
 
 		if (debug)
 			startEvent(
@@ -41,7 +40,6 @@ public class HttpFunction implements JavaDelegate {
 					url,
 					payload,
 					(String) delegateExecution.getVariable("headers"),
-					needDecode,
 					fileName,
 					delegateExecution
 			);
@@ -60,7 +58,7 @@ public class HttpFunction implements JavaDelegate {
 
 		Method method;
 		switch ((String) delegateExecution.getVariable("method")) {
-			case "GET": method = Connection.Method.GET; break;
+			case "GET": method = Connection.Method.GET; payload = null; break;
 			case "POST": method = Connection.Method.POST; break;
 			case "PUT": method = Connection.Method.PUT; break;
 			default:
@@ -89,7 +87,6 @@ public class HttpFunction implements JavaDelegate {
 				response_body = response_string;
 			}
 			else {
-				if (needDecode){ response_bytes = Utility.base64Decode(response_bytes); }
 				File file = new File(System.getProperty("java.io.tmpdir"), fileName);
 				new FileOutputStream(file).write(response_bytes);
 				response_file_path = file.getAbsolutePath();
@@ -119,10 +116,10 @@ public class HttpFunction implements JavaDelegate {
 	}
 
 	private void startEvent(String method, String url, String payload, String headers,
-	                        boolean needDecode, String fileName, DelegateExecution delegateExecution){
+	                        String fileName, DelegateExecution delegateExecution){
 		LOGGER.info(Utility.printLog(
 				"{method: " + method + ", URL: " + url + ", payload: " + payload +
-						", headers: " + headers + ", base64Decode: " + needDecode + ", fileName: " + fileName + "}",
+						", headers: " + headers  + ", fileName: " + fileName + "}",
 				delegateExecution));
 	}
 

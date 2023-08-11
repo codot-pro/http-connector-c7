@@ -55,9 +55,8 @@ Reload the application, and you will be able to assign a template.
   - (only for headers) Send headers as Map: {"Content-Type":"application/json", "Authorization":"your token", "headers":"value", ...}
 - Timeout
   - Integer (ms)
-- File name + base64 decode
+- File name
   - Must always be specified
-  - If you need to decode a file from base64 to UTF-8 select TRUE
   - If the response is not a file, then the response will be written to the **response body**
 
 ### Output data

@@ -14,12 +14,12 @@
         <camunda:inputOutput>
           <camunda:inputParameter name="headers">{"Content-Type":"application/json"}</camunda:inputParameter>
           <camunda:inputParameter name="base64decode">false</camunda:inputParameter>
-          <camunda:inputParameter name="response_file_name">artcl.pdf</camunda:inputParameter>
-          <camunda:inputParameter name="payload">{"payload":"someValue"}</camunda:inputParameter>
           <camunda:inputParameter name="debugMode">true</camunda:inputParameter>
-          <camunda:inputParameter name="url">https://webhook.site/fe836a40-18dd-4246-8fb2-19dc0f1e1580</camunda:inputParameter>
-          <camunda:inputParameter name="timeout">600</camunda:inputParameter>
-          <camunda:inputParameter name="method">POST</camunda:inputParameter>
+          <camunda:inputParameter name="payload" />
+          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
+          <camunda:inputParameter name="method">GET</camunda:inputParameter>
+          <camunda:inputParameter name="url">https://file-service.codot.pro/api/file/1691759133214-728231709_article.pdf</camunda:inputParameter>
+          <camunda:inputParameter name="response_file_name">artcl333.pdf</camunda:inputParameter>
           <camunda:outputParameter name="status_code">${status_code}</camunda:outputParameter>
           <camunda:outputParameter name="status_msg">${status_msg}</camunda:outputParameter>
           <camunda:outputParameter name="response_body">${response_body}</camunda:outputParameter>
