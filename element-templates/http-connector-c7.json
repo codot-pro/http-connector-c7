@@ -19,6 +19,10 @@
     {
       "id": "output",
       "label": "Output Mapping"
+    },
+    {
+      "id": "debug",
+      "label": "Debug tools"
     }
   ],
   "properties": [
@@ -221,6 +225,30 @@
         "type": "camunda:outputParameter",
         "source": "${response_file_path}"
       }
+    },
+	{
+      "label": "Debug mode",
+      "feel": "required",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "debugMode"
+      },
+		"value": "false",
+      "constraints": {
+        "notEmpty": true
+      },
+		"type": "Dropdown",
+      "choices": [
+        {
+          "name": "TRUE",
+          "value": "true"
+        },
+        {
+          "name": "FALSE",
+          "value": "false"
+        }
+      ],
+      "group": "debug"
     }
   ]
 }

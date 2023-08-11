@@ -15,7 +15,8 @@ class Utility {
 	public static String printLog(String msg, DelegateExecution execution) {
 		RepositoryService repositoryService = execution.getProcessEngineServices().getRepositoryService();
 		ProcessDefinition processDefinition = repositoryService.getProcessDefinition(execution.getProcessDefinitionId());
-		String source_line = processDefinition.getKey() + ":" + processDefinition.getVersion() + ":" + execution.getCurrentActivityName();
+		String processInstanceId = execution.getProcessInstanceId();
+		String source_line = processDefinition.getKey() + ":" + processDefinition.getVersion() + ":" + execution.getCurrentActivityName() + ":" + processInstanceId;
 		return " [" + source_line + "]: " + msg;
 	}
 

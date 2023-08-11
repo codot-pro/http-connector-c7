@@ -5,25 +5,21 @@
       <bpmn:outgoing>Flow_0wij7gk</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_0wij7gk" sourceRef="StartEvent_1" targetRef="Activity_03mntty" />
-    <bpmn:sequenceFlow id="Flow_1187hd1" sourceRef="Activity_03mntty" targetRef="Activity_1y1bkxg" />
+    <bpmn:sequenceFlow id="Flow_1187hd1" sourceRef="Activity_03mntty" targetRef="Event_1gz2ozn" />
     <bpmn:endEvent id="Event_1gz2ozn">
-      <bpmn:incoming>Flow_0r7aofd</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0r7aofd" sourceRef="Activity_1y1bkxg" targetRef="Event_1gz2ozn" />
-    <bpmn:serviceTask id="Activity_1y1bkxg" name="showVariable" camunda:class="com.codot.camundaconnectors.http.ShowVariable">
       <bpmn:incoming>Flow_1187hd1</bpmn:incoming>
-      <bpmn:outgoing>Flow_0r7aofd</bpmn:outgoing>
-    </bpmn:serviceTask>
+    </bpmn:endEvent>
     <bpmn:serviceTask id="Activity_03mntty" name="HttpConnector" camunda:modelerTemplate="com.codot.camundaconnectors.http.c7" camunda:modelerTemplateVersion="1" camunda:class="com.codot.camundaconnectors.http.HttpFunction">
       <bpmn:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="method">GET</camunda:inputParameter>
           <camunda:inputParameter name="headers">{"Content-Type":"application/json"}</camunda:inputParameter>
           <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
-          <camunda:inputParameter name="payload" />
           <camunda:inputParameter name="base64decode">false</camunda:inputParameter>
-          <camunda:inputParameter name="response_file_name">article.pdf</camunda:inputParameter>
-          <camunda:inputParameter name="url">https://file-service.codot.pro/api/file/1691674992181-704243579_article.pdf</camunda:inputParameter>
+          <camunda:inputParameter name="response_file_name">artcl.pdf</camunda:inputParameter>
+          <camunda:inputParameter name="debugMode">true</camunda:inputParameter>
+          <camunda:inputParameter name="payload">{"payload":"someValue"}</camunda:inputParameter>
+          <camunda:inputParameter name="url">https://webhook.site/fe836a40-18dd-4246-8fb2-19dc0f1e1580</camunda:inputParameter>
+          <camunda:inputParameter name="method">POST</camunda:inputParameter>
           <camunda:outputParameter name="status_code">${status_code}</camunda:outputParameter>
           <camunda:outputParameter name="status_msg">${status_msg}</camunda:outputParameter>
           <camunda:outputParameter name="response_body">${response_body}</camunda:outputParameter>
@@ -39,15 +35,11 @@
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1gz2ozn_di" bpmnElement="Event_1gz2ozn">
-        <dc:Bounds x="552" y="99" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0bxorqb_di" bpmnElement="Activity_1y1bkxg">
-        <dc:Bounds x="410" y="77" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0zc5gql_di" bpmnElement="Activity_03mntty">
+      <bpmndi:BPMNShape id="Activity_1d8g5oq_di" bpmnElement="Activity_03mntty">
         <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gz2ozn_di" bpmnElement="Event_1gz2ozn">
+        <dc:Bounds x="412" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0wij7gk_di" bpmnElement="Flow_0wij7gk">
         <di:waypoint x="215" y="117" />
@@ -55,11 +47,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1187hd1_di" bpmnElement="Flow_1187hd1">
         <di:waypoint x="370" y="117" />
-        <di:waypoint x="410" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0r7aofd_di" bpmnElement="Flow_0r7aofd">
-        <di:waypoint x="510" y="117" />
-        <di:waypoint x="552" y="117" />
+        <di:waypoint x="412" y="117" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

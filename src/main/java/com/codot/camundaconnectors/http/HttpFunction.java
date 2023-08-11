@@ -27,11 +27,24 @@ public class HttpFunction implements JavaDelegate {
 
 	@Override
 	public void execute(DelegateExecution delegateExecution) {
+		boolean debug = Boolean.parseBoolean((String) delegateExecution.getVariable("debugMode"));
+
 		String url = (String) delegateExecution.getVariable("url");
 		int timeout = Integer.parseInt((String) delegateExecution.getVariable("timeout"));
 		String payload = (String) delegateExecution.getVariable("payload");
 		String fileName = (String) delegateExecution.getVariable("response_file_name");
 		boolean needDecode = Boolean.parseBoolean((String) delegateExecution.getVariable("base64decode"));
+
+		if (debug)
+			startEvent(
+					(String) delegateExecution.getVariable("method"),
+					url,
+					payload,
+					(String) delegateExecution.getVariable("headers"),
+					needDecode,
+					fileName,
+					delegateExecution
+			);
 
 		Map<String, String> headers = null;
 		try {
@@ -72,8 +85,7 @@ public class HttpFunction implements JavaDelegate {
 			status_msg = response.statusMessage();
 			byte[] response_bytes = response.bodyAsBytes();
 			String response_string = new String(response_bytes, StandardCharsets.UTF_8);
-
-			if (Utility.isValid(response_string)){
+			if (Utility.isValid(response_string) || response_string.isEmpty()){ // isEmpty because response can be empty and file will be created
 				response_body = response_string;
 			}
 			else {
@@ -94,6 +106,8 @@ public class HttpFunction implements JavaDelegate {
 				status_code = "500";
 			}
 		}
+		if (debug)
+			endEvent(delegateExecution);
 		packRespond(delegateExecution);
 	}
 
@@ -102,5 +116,19 @@ public class HttpFunction implements JavaDelegate {
 		delegateExecution.setVariable("status_msg", status_msg);
 		delegateExecution.setVariable("response_body", response_body);
 		delegateExecution.setVariable("response_file_path", response_file_path);
+	}
+
+	private void startEvent(String method, String url, String payload, String headers,
+	                        boolean needDecode, String fileName, DelegateExecution delegateExecution){
+		LOGGER.info(Utility.printLog(
+				"{method: " + method + ", URL: " + url + ", payload: " + payload +
+						", headers: " + headers + ", base64Decode: " + needDecode + ", fileName: " + fileName + "}",
+				delegateExecution));
+	}
+
+	private void endEvent(DelegateExecution delegateExecution){
+		LOGGER.info(Utility.printLog("{statusCode: " + status_code + ", statusMsg: "+ status_msg +
+				", response_body: " + response_body + ", response_file_path: " + response_file_path + "}",
+				delegateExecution));
 	}
 }
