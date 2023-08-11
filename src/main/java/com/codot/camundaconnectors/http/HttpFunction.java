@@ -98,7 +98,7 @@ public class HttpFunction implements JavaDelegate {
 		}
 		catch (Exception e) {
 			status_msg = e.toString();
-			LOGGER.error(e.toString());
+			LOGGER.error(Utility.printLog(status_msg, delegateExecution));
 			if (e.getClass().getSimpleName().equals("SocketTimeoutException")) {
 				status_code = "504";
 			}
