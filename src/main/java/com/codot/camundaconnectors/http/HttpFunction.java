@@ -16,13 +16,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.camunda.spin.Spin.S;
+
 @Component
 public class HttpFunction implements JavaDelegate {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpFunction.class);
 
 	String status_code = "";
 	String status_msg = "";
-	String response_body = "";
+	Object response_body = null;
 	String response_file_path = "";
 
 	@Override
@@ -31,7 +33,7 @@ public class HttpFunction implements JavaDelegate {
 
 		String url = (String) delegateExecution.getVariable("url");
 		int timeout = Integer.parseInt((String) delegateExecution.getVariable("timeout"));
-		String payload = (String) delegateExecution.getVariable("payload");
+		String payload = (delegateExecution.getVariable("payload")).toString();
 		String fileName = (String) delegateExecution.getVariable("response_file_name");
 
 		if (debug)
@@ -73,7 +75,7 @@ public class HttpFunction implements JavaDelegate {
 			response = Jsoup.connect(url)
 					.headers(headers == null ? new HashMap<>() : headers)
 					.method(method)
-					.requestBody(payload)
+					.requestBody(payload != null ? payload : "")
 					.timeout(timeout)
 					.ignoreContentType(true)
 					.ignoreHttpErrors(true)
@@ -83,12 +85,14 @@ public class HttpFunction implements JavaDelegate {
 			status_msg = response.statusMessage();
 			byte[] response_bytes = response.bodyAsBytes();
 			String response_string = new String(response_bytes, StandardCharsets.UTF_8);
-			if (Utility.isValid(response_string) || response_string.isEmpty()){ // isEmpty because response can be empty and file will be created
-				response_body = response_string;
+			if (Utility.isValid(response_string)){
+				response_body = response_string.isEmpty() ? "" : S(response_string);
 			}
 			else {
 				File file = new File(System.getProperty("java.io.tmpdir"), fileName);
-				new FileOutputStream(file).write(response_bytes);
+				FileOutputStream fos = new FileOutputStream(file);
+				fos.write(response_bytes);
+				fos.close();
 				response_file_path = file.getAbsolutePath();
 				file.deleteOnExit();
 			}
@@ -111,7 +115,7 @@ public class HttpFunction implements JavaDelegate {
 	private void packRespond(DelegateExecution delegateExecution){
 		delegateExecution.setVariable("status_code", status_code);
 		delegateExecution.setVariable("status_msg", status_msg);
-		delegateExecution.setVariable("response_body", response_body);
+		delegateExecution.setVariable("response_body", response_body == null? "":response_body);
 		delegateExecution.setVariable("response_file_path", response_file_path);
 	}
 

@@ -10,6 +10,8 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.camunda.spin.Spin.S;
+
 class Utility {
 
 	public static String printLog(String msg, DelegateExecution execution) {
@@ -20,11 +22,7 @@ class Utility {
 		return " [" + source_line + "]: " + msg;
 	}
 
-	public static byte[] base64Decode(byte[] src){
-		return Base64.getDecoder().decode(src);
-	}
-
-	public static Map<String, String> parseHeaders(String json){
+	public static Map<String, String> parseHeaders(String json) throws  JSONException{
 		JSONObject jsonObject;
 		if (isValid(json)){
 			jsonObject = new JSONObject(json);
@@ -40,9 +38,11 @@ class Utility {
 	}
 
 	public static boolean isValid(String json) {
+		if (json.isEmpty())
+			return true;
 		try {
-			new JSONObject(json);
-		} catch (JSONException e) {
+			S(json);
+		} catch (Exception e) {
 			return false;
 		}
 		return true;
