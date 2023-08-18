@@ -27,3 +27,4 @@ replay_pid*
 /.idea/
 /target/
 /camunda-h2-database.mv.db
+/camunda-h2-database.trace.db
