@@ -79,6 +79,7 @@ public class HttpFunction implements JavaDelegate {
 					.timeout(timeout)
 					.ignoreContentType(true)
 					.ignoreHttpErrors(true)
+					.maxBodySize(0)
 					.execute();
 
 			status_code = String.valueOf(response.statusCode());
@@ -94,7 +95,6 @@ public class HttpFunction implements JavaDelegate {
 				fos.write(response_bytes);
 				fos.close();
 				response_file_path = file.getAbsolutePath();
-				file.deleteOnExit();
 			}
 		}
 		catch (Exception e) {
