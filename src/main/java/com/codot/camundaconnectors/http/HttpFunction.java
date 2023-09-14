@@ -33,7 +33,9 @@ public class HttpFunction implements JavaDelegate {
 
 		String url = (String) delegateExecution.getVariable("url");
 		int timeout = Integer.parseInt((String) delegateExecution.getVariable("timeout"));
-		String payload = (delegateExecution.getVariable("payload")).toString();
+		String payload = delegateExecution.getVariable("payload") == null ?
+				null :
+				delegateExecution.getVariable("payload").toString();
 		String fileName = (String) delegateExecution.getVariable("response_file_name");
 
 		if (debug)
@@ -75,7 +77,7 @@ public class HttpFunction implements JavaDelegate {
 			response = Jsoup.connect(url)
 					.headers(headers == null ? new HashMap<>() : headers)
 					.method(method)
-					.requestBody(payload != null ? payload : "")
+					.requestBody(payload)
 					.timeout(timeout)
 					.ignoreContentType(true)
 					.ignoreHttpErrors(true)
