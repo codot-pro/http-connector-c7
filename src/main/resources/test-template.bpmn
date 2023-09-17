@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0haevpk" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.13.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.19.0">
-  <bpmn:process id="TestHttpConnectorTemplate" name="HTTP connector test" isExecutable="true" camunda:versionTag="v6" camunda:historyTimeToLive="3">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0haevpk" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.13.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="TestHttpConnectorTemplate" name="HTTP connector test" isExecutable="true" camunda:versionTag="v9" camunda:historyTimeToLive="3">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_0wij7gk</bpmn:outgoing>
     </bpmn:startEvent>
@@ -17,9 +17,9 @@
           <camunda:inputParameter name="debugMode">true</camunda:inputParameter>
           <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
           <camunda:inputParameter name="method">GET</camunda:inputParameter>
-          <camunda:inputParameter name="url">https://file-service.codot.pro/api/file/1691759133214-728231709_article.pdf</camunda:inputParameter>
           <camunda:inputParameter name="response_file_name">artcl333.pdf</camunda:inputParameter>
           <camunda:inputParameter name="payload" />
+          <camunda:inputParameter name="url">https://650478d7c8869921ae25165a.mockapi.io</camunda:inputParameter>
           <camunda:outputParameter name="status_code">${status_code}</camunda:outputParameter>
           <camunda:outputParameter name="status_msg">${status_msg}</camunda:outputParameter>
           <camunda:outputParameter name="response_body">${response_body}</camunda:outputParameter>
