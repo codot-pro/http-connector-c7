@@ -28,7 +28,7 @@
     <description>CODOT HTTP Connector</description>
     <groupId>com.codot.camundaconnectors.http</groupId>
     <artifactId>http-connector-c7</artifactId>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

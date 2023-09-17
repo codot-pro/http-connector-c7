@@ -2,6 +2,8 @@ package com.codot.camundaconnectors.http;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.camunda.spin.Spin;
+import org.camunda.spin.impl.json.jackson.JacksonJsonNode;
 import org.json.JSONException;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
@@ -15,6 +17,7 @@ import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.camunda.spin.Spin.S;
 
@@ -33,10 +36,17 @@ public class HttpFunction implements JavaDelegate {
 
 		String url = (String) delegateExecution.getVariable("url");
 		int timeout = Integer.parseInt((String) delegateExecution.getVariable("timeout"));
-		String payload = delegateExecution.getVariable("payload") == null ?
-				null :
-				delegateExecution.getVariable("payload").toString();
 		String fileName = (String) delegateExecution.getVariable("response_file_name");
+
+		Object payloadObj = delegateExecution.getVariable("payload");
+		String payload;
+		if (Objects.isNull(payloadObj))	payload = null;
+		else {
+			payload = payloadObj.toString();
+			if (payload.startsWith("\"") && payload.endsWith("\"") && payload.length() > 2){
+				payload = payload.substring(1, payload.length() - 1);
+			}
+		}
 
 		if (debug)
 			startEvent(
@@ -89,7 +99,7 @@ public class HttpFunction implements JavaDelegate {
 			byte[] response_bytes = response.bodyAsBytes();
 			String response_string = new String(response_bytes, StandardCharsets.UTF_8);
 			if (Utility.isValid(response_string)){
-				response_body = response_string.isEmpty() ? "" : S(response_string);
+                response_body = Spin.<JacksonJsonNode>S(response_string);
 			}
 			else {
 				File file = new File(System.getProperty("java.io.tmpdir"), fileName);
