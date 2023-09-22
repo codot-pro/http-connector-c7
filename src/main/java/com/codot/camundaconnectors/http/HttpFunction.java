@@ -106,7 +106,7 @@ public class HttpFunction implements JavaDelegate {
 				FileOutputStream fos = new FileOutputStream(file);
 				fos.write(response_bytes);
 				fos.close();
-				response_file_path = file.getAbsolutePath();
+				response_file_path = file.getName();
 			}
 		}
 		catch (Exception e) {
