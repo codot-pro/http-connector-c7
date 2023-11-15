@@ -12,9 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -82,43 +87,55 @@ public class HttpFunction implements JavaDelegate {
 				return;
 		}
 
-		Connection.Response response;
+		TrustManager[] trustAllCerts = Utility.TrustManager;
 		try {
-			response = Jsoup.connect(url)
-					.headers(headers == null ? new HashMap<>() : headers)
-					.method(method)
-					.requestBody(payload)
-					.timeout(timeout)
-					.ignoreContentType(true)
-					.ignoreHttpErrors(true)
-					.maxBodySize(0)
-					.execute();
+			SSLContext sc = SSLContext.getInstance("SSL");
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
 
-			status_code = String.valueOf(response.statusCode());
-			status_msg = response.statusMessage();
-			byte[] response_bytes = response.bodyAsBytes();
-			String response_string = new String(response_bytes, StandardCharsets.UTF_8);
-			if (Utility.isValid(response_string)){
-                response_body = Spin.<JacksonJsonNode>S(response_string);
+			Connection.Response response;
+			try {
+				response = Jsoup.connect(url)
+
+						.headers(headers == null ? new HashMap<>() : headers)
+						.method(method)
+						.requestBody(payload)
+						.timeout(timeout)
+						.ignoreContentType(true)
+						.sslSocketFactory(sc.getSocketFactory())
+						.ignoreHttpErrors(true)
+						.maxBodySize(0)
+						.execute();
+
+				status_code = String.valueOf(response.statusCode());
+				status_msg = response.statusMessage();
+				byte[] response_bytes = response.bodyAsBytes();
+				String response_string = new String(response_bytes, StandardCharsets.UTF_8);
+				if (Utility.isValid(response_string)){
+					response_body = Spin.<JacksonJsonNode>S(response_string);
+				}
+				else {
+					File file = new File(System.getProperty("java.io.tmpdir"), fileName);
+					FileOutputStream fos = new FileOutputStream(file);
+					fos.write(response_bytes);
+					fos.close();
+					response_file_path = file.getName();
+				}
 			}
-			else {
-				File file = new File(System.getProperty("java.io.tmpdir"), fileName);
-				FileOutputStream fos = new FileOutputStream(file);
-				fos.write(response_bytes);
-				fos.close();
-				response_file_path = file.getName();
+			catch (Exception e) {
+				status_msg = e.toString();
+				LOGGER.error(Utility.printLog(status_msg, delegateExecution));
+				if (e.getClass().getSimpleName().equals("SocketTimeoutException")) {
+					status_code = "504";
+				}
+				else {
+					status_code = "500";
+				}
 			}
-		}
-		catch (Exception e) {
-			status_msg = e.toString();
-			LOGGER.error(Utility.printLog(status_msg, delegateExecution));
-			if (e.getClass().getSimpleName().equals("SocketTimeoutException")) {
-				status_code = "504";
-			}
-			else {
-				status_code = "500";
-			}
-		}
+		} catch (NoSuchAlgorithmException | KeyManagementException e) {
+            throw new RuntimeException(e);
+        }
+
+
 		if (debug)
 			endEvent(delegateExecution);
 		packRespond(delegateExecution);
