@@ -6,6 +6,8 @@ import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,4 +49,30 @@ class Utility {
 		}
 		return true;
 	}
+
+	static final TrustManager[] TrustManager = new TrustManager[]{
+			new X509TrustManager() {
+				@Override
+				public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
+				@Override
+				public void checkClientTrusted(
+						java.security.cert.X509Certificate[] certs, String authType) {
+				}
+				@Override
+				public void checkServerTrusted(
+						java.security.cert.X509Certificate[] certs, String authType) {
+				}
+			}
+	};
+	static public String getPrefix(String fileName){
+		return fileName.substring(0, fileName.lastIndexOf(".")) + "-";
+	}
+	static public String getSuffix(String fileName){
+		String[] nameParts = fileName.split("\\.");
+		return "."+nameParts[nameParts.length - 1];
+	}
+
+
 }

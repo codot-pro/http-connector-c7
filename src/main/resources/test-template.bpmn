@@ -12,14 +12,15 @@
     <bpmn:serviceTask id="Activity_03mntty" name="HttpConnector" camunda:modelerTemplate="com.codot.camundaconnectors.http.c7" camunda:modelerTemplateVersion="1" camunda:class="com.codot.camundaconnectors.http.HttpFunction">
       <bpmn:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="headers">{"Content-Type":"application/json"}</camunda:inputParameter>
-          <camunda:inputParameter name="base64decode">false</camunda:inputParameter>
-          <camunda:inputParameter name="debugMode">true</camunda:inputParameter>
           <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
-          <camunda:inputParameter name="method">GET</camunda:inputParameter>
-          <camunda:inputParameter name="response_file_name">artcl333.pdf</camunda:inputParameter>
           <camunda:inputParameter name="payload" />
-          <camunda:inputParameter name="url">https://650478d7c8869921ae25165a.mockapi.io</camunda:inputParameter>
+          <camunda:inputParameter name="debugMode">true</camunda:inputParameter>
+          <camunda:inputParameter name="validateSSL">true</camunda:inputParameter>
+          <camunda:inputParameter name="method">GET</camunda:inputParameter>
+          <camunda:inputParameter name="headers">{"Content-Type":"application/json"}</camunda:inputParameter>
+          <camunda:inputParameter name="response_file_name">article.pdf</camunda:inputParameter>
+          <camunda:inputParameter name="attachment">my-attached.file</camunda:inputParameter>
+          <camunda:inputParameter name="url">https://webhook.site/a44b06a6-788b-44b5-b20b-1e99de30b203</camunda:inputParameter>
           <camunda:outputParameter name="status_code">${status_code}</camunda:outputParameter>
           <camunda:outputParameter name="status_msg">${status_msg}</camunda:outputParameter>
           <camunda:outputParameter name="response_body">${response_body}</camunda:outputParameter>
@@ -35,11 +36,11 @@
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1gz2ozn_di" bpmnElement="Event_1gz2ozn">
-        <dc:Bounds x="412" y="99" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1d8g5oq_di" bpmnElement="Activity_03mntty">
+      <bpmndi:BPMNShape id="Activity_0fot7lw_di" bpmnElement="Activity_03mntty">
         <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gz2ozn_di" bpmnElement="Event_1gz2ozn">
+        <dc:Bounds x="402" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0wij7gk_di" bpmnElement="Flow_0wij7gk">
         <di:waypoint x="215" y="117" />
@@ -47,7 +48,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1187hd1_di" bpmnElement="Flow_1187hd1">
         <di:waypoint x="370" y="117" />
-        <di:waypoint x="412" y="117" />
+        <di:waypoint x="402" y="117" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
