@@ -10,58 +10,46 @@ import org.jsoup.Connection.Method;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
+import java.nio.file.Files;
 import java.util.Map;
-import java.util.Objects;
-
-import static org.camunda.spin.Spin.S;
 
 @Component
 public class HttpFunction implements JavaDelegate {
+	@Autowired
+	HttpService service;
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpFunction.class);
 
-	String status_code = "";
-	String status_msg = "";
-	Object response_body = null;
-	String response_file_path = "";
+	public String status_code = "";
+	public String status_msg = "";
+	public Object response_body = null;
+	public String response_file_path = "";
+
 
 	@Override
 	public void execute(DelegateExecution delegateExecution) {
 		boolean debug = Boolean.parseBoolean((String) delegateExecution.getVariable("debugMode"));
+		boolean ssl = Boolean.parseBoolean((String) delegateExecution.getVariable("validateSSL"));
+		boolean delete = Boolean.parseBoolean((String) delegateExecution.getVariable("delete"));
 
 		String url = (String) delegateExecution.getVariable("url");
 		int timeout = Integer.parseInt((String) delegateExecution.getVariable("timeout"));
 		String fileName = (String) delegateExecution.getVariable("response_file_name");
+		String attachment = (String) delegateExecution.getVariable("attachment");
+
 
 		Object payloadObj = delegateExecution.getVariable("payload");
-		String payload;
-		if (Objects.isNull(payloadObj))	payload = null;
-		else {
-			payload = payloadObj.toString();
-			if (payload.startsWith("\"") && payload.endsWith("\"") && payload.length() > 2){
-				payload = payload.substring(1, payload.length() - 1);
-			}
-		}
+		String payload = service.getPayloadFromObj(payloadObj);
 
-		if (debug)
-			startEvent(
-					(String) delegateExecution.getVariable("method"),
-					url,
-					payload,
-					(String) delegateExecution.getVariable("headers"),
-					fileName,
-					delegateExecution
-			);
+		if (debug) startEvent(
+				(String) delegateExecution.getVariable("method"),
+				ssl, delete, url, payload, (String) delegateExecution.getVariable("headers"),
+				fileName, delegateExecution);
 
 		Map<String, String> headers = null;
 		try {
@@ -75,65 +63,52 @@ public class HttpFunction implements JavaDelegate {
 			return;
 		}
 
-		Method method;
-		switch ((String) delegateExecution.getVariable("method")) {
-			case "GET": method = Connection.Method.GET; payload = null; break;
-			case "POST": method = Connection.Method.POST; break;
-			case "PUT": method = Connection.Method.PUT; break;
-			default:
-				status_code = "400";
-				status_msg = "Bad request. Invalid method";
-				packRespond(delegateExecution);
-				return;
-		}
+		Method method = service.getHttpMethod(this, delegateExecution, payload);
+		if (method == null) return;
 
-		TrustManager[] trustAllCerts = Utility.TrustManager;
+		Connection.Response response;
 		try {
-			SSLContext sc = SSLContext.getInstance("SSL");
-			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			ConnectionBuilder connection = new ConnectionBuilder(Jsoup.connect(url));
 
-			Connection.Response response;
-			try {
-				response = Jsoup.connect(url)
+			connection.setMethod(method);
+			if (headers != null) connection.setHeaders(headers);
+			if (payload != null) connection.setRequestBody(payload);
+			if (attachment != null) connection.setData(attachment, delete);
+			if (!ssl) connection.disableValidateSSL();
 
-						.headers(headers == null ? new HashMap<>() : headers)
-						.method(method)
-						.requestBody(payload)
-						.timeout(timeout)
-						.ignoreContentType(true)
-						.sslSocketFactory(sc.getSocketFactory())
-						.ignoreHttpErrors(true)
-						.maxBodySize(0)
-						.execute();
+			response = connection.build()
+					.timeout(timeout)
+					.ignoreContentType(true)
+					.ignoreHttpErrors(true)
+					.maxBodySize(0)
+					.execute();
 
-				status_code = String.valueOf(response.statusCode());
-				status_msg = response.statusMessage();
-				byte[] response_bytes = response.bodyAsBytes();
-				String response_string = new String(response_bytes, StandardCharsets.UTF_8);
-				if (Utility.isValid(response_string)){
-					response_body = Spin.<JacksonJsonNode>S(response_string);
-				}
-				else {
-					File file = new File(System.getProperty("java.io.tmpdir"), fileName);
-					FileOutputStream fos = new FileOutputStream(file);
-					fos.write(response_bytes);
-					fos.close();
-					response_file_path = file.getName();
-				}
+			status_code = String.valueOf(response.statusCode());
+			status_msg = response.statusMessage();
+			byte[] response_bytes = response.bodyAsBytes();
+			String response_string = new String(response_bytes, StandardCharsets.UTF_8);
+			if (Utility.isValid(response_string)){
+				response_body = Spin.<JacksonJsonNode>S(response_string);
 			}
-			catch (Exception e) {
-				status_msg = e.toString();
-				LOGGER.error(Utility.printLog(status_msg, delegateExecution));
-				if (e.getClass().getSimpleName().equals("SocketTimeoutException")) {
-					status_code = "504";
-				}
-				else {
-					status_code = "500";
-				}
+			else {
+				File file = Files.createTempFile(Utility.getPrefix(fileName), Utility.getSuffix(fileName)).toFile();
+				FileOutputStream fos = new FileOutputStream(file);
+				fos.write(response_bytes);
+				fos.close();
+				response_file_path = file.getName();
+				if (debug) LOGGER.info(Utility.printLog("File absolute path=" + file.getAbsolutePath(), delegateExecution));
 			}
-		} catch (NoSuchAlgorithmException | KeyManagementException e) {
-            throw new RuntimeException(e);
-        }
+		}
+		catch (Exception e) {
+			status_msg = e.toString();
+			LOGGER.error(Utility.printLog(status_msg, delegateExecution));
+			if (e.getClass().getSimpleName().equals("SocketTimeoutException")) {
+				status_code = "504";
+			}
+			else {
+				status_code = "500";
+			}
+		}
 
 
 		if (debug)
@@ -141,22 +116,23 @@ public class HttpFunction implements JavaDelegate {
 		packRespond(delegateExecution);
 	}
 
-	private void packRespond(DelegateExecution delegateExecution){
+	public void packRespond(DelegateExecution delegateExecution){
 		delegateExecution.setVariable("status_code", status_code);
 		delegateExecution.setVariable("status_msg", status_msg);
 		delegateExecution.setVariable("response_body", response_body == null? "":response_body);
 		delegateExecution.setVariable("response_file_path", response_file_path);
 	}
 
-	private void startEvent(String method, String url, String payload, String headers,
-	                        String fileName, DelegateExecution delegateExecution){
+	public void startEvent(String method, boolean ssl, boolean delete, String url, String payload, String headers,
+						   String fileName, DelegateExecution delegateExecution){
 		LOGGER.info(Utility.printLog(
 				"{method: " + method + ", URL: " + url + ", payload: " + payload +
-						", headers: " + headers  + ", fileName: " + fileName + "}",
+						", headers: " + headers  + ", fileName: " + fileName +
+						", ssl: " + ssl + ", deleteFile: " + delete +"}",
 				delegateExecution));
 	}
 
-	private void endEvent(DelegateExecution delegateExecution){
+	public void endEvent(DelegateExecution delegateExecution){
 		LOGGER.info(Utility.printLog("{statusCode: " + status_code + ", statusMsg: "+ status_msg +
 				", response_body: " + response_body + ", response_file_path: " + response_file_path + "}",
 				delegateExecution));

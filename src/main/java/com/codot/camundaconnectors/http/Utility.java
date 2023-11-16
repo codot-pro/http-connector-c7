@@ -66,4 +66,13 @@ class Utility {
 				}
 			}
 	};
+	static public String getPrefix(String fileName){
+		return fileName.substring(0, fileName.lastIndexOf(".")) + "-";
+	}
+	static public String getSuffix(String fileName){
+		String[] nameParts = fileName.split("\\.");
+		return "."+nameParts[nameParts.length - 1];
+	}
+
+
 }

@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
   "name": "http-connector",
   "id": "com.codot.camundaconnectors.http.c7",
-  "description": "CODOT HTTP Connector",
+  "description": "CODOT HTTP Connector (v1.2.0)",
   "version": 1,
   "entriesVisible": false,
   "appliesTo": [
@@ -23,6 +23,10 @@
     {
       "id": "debug",
       "label": "Debug tools"
+    },
+    {
+      "id": "async",
+      "label": "Asynchronous continuations"
     }
   ],
   "properties": [
@@ -39,7 +43,7 @@
 	 {
       "label": "Method",
       "type": "Dropdown",
-		"value": "GET",
+	  "value": "GET",
       "choices": [
         {
           "name": "POST",
@@ -112,7 +116,7 @@
       "group": "inputs"
     },
     {
-      "label": "File name",
+      "label": "Response file name",
       "type": "String",
       "feel": "required",
       "binding": {
@@ -122,6 +126,37 @@
       "constraints": {
         "notEmpty": true
       },
+      "group": "inputs"
+    },
+    {
+      "label": "Attach file",
+      "type": "String",
+      "value": "",
+      "feel": "required",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "attachment"
+      },
+      "group": "inputs"
+    },
+    {
+      "label": "Delete attached file?",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "delete"
+      },
+      "value": "false",
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "TRUE",
+          "value": "true"
+        },
+        {
+          "name": "FALSE",
+          "value": "false"
+        }
+      ],
       "group": "inputs"
     },
     {
@@ -182,18 +217,18 @@
         "source": "${response_file_path}"
       }
     },
-	{
+	  {
       "label": "Debug mode",
       "feel": "required",
       "binding": {
         "type": "camunda:inputParameter",
         "name": "debugMode"
       },
-		"value": "false",
+	  "value": "false",
       "constraints": {
         "notEmpty": true
       },
-		"type": "Dropdown",
+	  "type": "Dropdown",
       "choices": [
         {
           "name": "TRUE",
@@ -205,6 +240,61 @@
         }
       ],
       "group": "debug"
+    },
+    {
+      "label": "Validate SSL",
+      "feel": "required",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "validateSSL"
+      },
+	    "value": "true",
+      "constraints": {
+        "notEmpty": true
+      },
+	    "type": "Dropdown",
+      "choices": [
+        {
+          "name": "enabled",
+          "value": "true"
+        },
+        {
+          "name": "disabled",
+          "value": "false"
+        }
+      ],
+      "group": "debug"
+    },
+
+    {
+      "label": "Async before?",
+      "binding": {
+        "type": "property",
+        "name": "camunda:asyncBefore"
+      },
+	  "type": "Boolean",
+      "value": "true",
+      "group": "async"
+    },
+    {
+      "label": "Async after?",
+      "binding": {
+        "type": "property",
+        "name": "camunda:asyncAfter"
+      },
+	  "type": "Boolean",
+      "value": "true",
+      "group": "async"
+    },
+    {
+      "label": "Async exclusive?",
+      "binding": {
+        "type": "property",
+        "name": "camunda:exclusive"
+      },
+	  "type": "Boolean",
+      "value": "true",
+      "group": "async"
     }
   ]
 }

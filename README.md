@@ -58,10 +58,11 @@ Reload the application, and you will be able to assign a template.
   - (only for headers) Send headers as Map: {"Content-Type":"application/json", "Authorization":"your token", "headers":"value", ...}
 - Timeout
   - Integer (ms)
-- File name
+- Response file name
   - Must always be specified
   - If the response is not a file, then the response will be written to the **response body**
-  
+- Attachments
+  - for attach file: file1.pdf
 ### Output data
 
 > It is important to fill in **all fields**
