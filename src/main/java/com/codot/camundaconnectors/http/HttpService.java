@@ -12,7 +12,7 @@ import java.util.Objects;
 public class HttpService {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpService.class);
 
-    public Connection.Method getHttpMethod(HttpFunction httpFunction, DelegateExecution delegateExecution, String payload){
+    public static Connection.Method getHttpMethod(HttpFunction httpFunction, DelegateExecution delegateExecution, String payload){
         switch ((String) delegateExecution.getVariable("method")) {
             case "GET":
                 payload = null;
@@ -29,7 +29,7 @@ public class HttpService {
         }
     }
 
-    public String getPayloadFromObj(Object payloadObj){
+    public static String getPayloadFromObj(Object payloadObj){
         String payload;
         if (Objects.isNull(payloadObj))	payload = null;
         else {
