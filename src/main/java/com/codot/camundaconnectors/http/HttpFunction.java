@@ -18,17 +18,18 @@ import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class HttpFunction implements JavaDelegate {
-	@Autowired
-	HttpService service;
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpFunction.class);
 
 	public String status_code = "";
 	public String status_msg = "";
 	public Object response_body = null;
 	public String response_file_path = "";
+
+
 
 
 	@Override
@@ -44,7 +45,7 @@ public class HttpFunction implements JavaDelegate {
 
 
 		Object payloadObj = delegateExecution.getVariable("payload");
-		String payload = service.getPayloadFromObj(payloadObj);
+		String payload = HttpService.getPayloadFromObj(payloadObj);
 
 		if (debug) startEvent(
 				(String) delegateExecution.getVariable("method"),
@@ -63,7 +64,7 @@ public class HttpFunction implements JavaDelegate {
 			return;
 		}
 
-		Method method = service.getHttpMethod(this, delegateExecution, payload);
+		Method method = HttpService.getHttpMethod(this, delegateExecution, payload);
 		if (method == null) return;
 
 		Connection.Response response;
