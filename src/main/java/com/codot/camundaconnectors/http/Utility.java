@@ -5,10 +5,10 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.XML;
 
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +26,7 @@ class Utility {
 
 	public static Map<String, String> parseHeaders(String json) throws  JSONException{
 		JSONObject jsonObject;
-		if (isValid(json)){
+		if (valid(json) != null){
 			jsonObject = new JSONObject(json);
 			Map<String, String> transformedMap = new HashMap<>();
 			for (Map.Entry<String, Object> entry : jsonObject.toMap().entrySet()) {
@@ -39,15 +39,19 @@ class Utility {
 		throw new JSONException("Bad request. Headers are wrong");
 	}
 
-	public static boolean isValid(String json) {
-		if (json.isEmpty())
-			return true;
-		try {
-			S(json);
-		} catch (Exception e) {
-			return false;
+	public static Object valid(String json) {
+		if (json.isEmpty()) {
+			return json;
 		}
-		return true;
+		try {
+			return S(json);
+		} catch (Exception eJson) {
+			try {
+				return S(XML.toString(XML.toJSONObject(json)));
+			} catch (Exception eXml){
+				return null;
+			}
+        }
 	}
 
 	static final TrustManager[] TrustManager = new TrustManager[]{

@@ -1,24 +1,29 @@
 package com.codot.camundaconnectors.http;
 
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.camunda.spin.Spin;
-import org.camunda.spin.impl.json.jackson.JacksonJsonNode;
 import org.json.JSONException;
-import org.jsoup.Connection;
-import org.jsoup.Connection.Method;
-import org.jsoup.Jsoup;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.netty.http.client.HttpClient;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Component
 public class HttpFunction implements JavaDelegate {
@@ -52,7 +57,8 @@ public class HttpFunction implements JavaDelegate {
 				ssl, delete, url, payload, (String) delegateExecution.getVariable("headers"),
 				fileName, delegateExecution);
 
-		Map<String, String> headers = null;
+
+		Map<String, String> headers = new HashMap<>();
 		try {
 			String headersString = (String) delegateExecution.getVariable("headers");
 			if (headersString != null)
@@ -63,35 +69,70 @@ public class HttpFunction implements JavaDelegate {
 			packRespond(delegateExecution);
 			return;
 		}
-
-		Method method = HttpService.getHttpMethod(this, delegateExecution, payload);
-		if (method == null) return;
-
-		Connection.Response response;
 		try {
-			ConnectionBuilder connection = new ConnectionBuilder(Jsoup.connect(url));
 
-			connection.setMethod(method);
-			if (headers != null) connection.setHeaders(headers);
-			if (payload != null) connection.setRequestBody(payload);
-			if (attachment != null) connection.setData(attachment, delete);
-			if (!ssl) connection.disableValidateSSL();
+			SslContext sslContext = SslContextBuilder
+					.forClient()
+					.trustManager(InsecureTrustManagerFactory.INSTANCE)
+					.build();
+			HttpClient httpClient = HttpClient.create().secure(t -> t.sslContext(sslContext));
 
-			response = connection.build()
-					.timeout(timeout)
-					.ignoreContentType(true)
-					.ignoreHttpErrors(true)
-					.maxBodySize(0)
-					.execute();
+			WebClient client;
+			if (!ssl)
+				client = WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient)).build();
+			else
+				client = WebClient.create();
 
-			status_code = String.valueOf(response.statusCode());
-			status_msg = response.statusMessage();
-			byte[] response_bytes = response.bodyAsBytes();
-			String response_string = new String(response_bytes, StandardCharsets.UTF_8);
-			if (Utility.isValid(response_string)){
-				response_body = Spin.<JacksonJsonNode>S(response_string);
+
+			Map<String, String> finalHeaders = headers;
+			WebClient.RequestBodySpec request = client
+					.method(HttpMethod.valueOf((String) delegateExecution.getVariable("method")))
+					.uri(url)
+					.headers(httpHeaders -> httpHeaders.setAll(finalHeaders));
+
+			Object payloadValue = payload;
+			if (attachment != null) {
+				MultipartBodyBuilder builder = new MultipartBodyBuilder();
+				try {
+					JSONObject obj = new JSONObject(payload);
+					for (Map.Entry<String, Object> key :obj.toMap().entrySet()){
+						builder.part(key.getKey(), key.getValue());
+					}
+				} catch (Exception e){
+					LOGGER.error("Error with parsing payload as JSON");
+				}
+
+				try {
+					File f = new File(System.getProperty("java.io.tmpdir"), fileName);
+					if (delete) f.deleteOnExit();
+					builder.part(fileName, new FileSystemResource(f));
+				} catch (Exception error){
+					status_code = "500";
+					status_msg = error.getClass().getSimpleName()+ ": " +error.getMessage();
+					LOGGER.error("File for attachment \"{}\" not found", fileName);
+				}
+
+
+				payloadValue = builder.build();
 			}
-			else {
+
+			ByteArrayResource res = (HttpService.isBinaryFile(payload) ?
+					request.body(HttpService.toBinaryBody(payload, delete)) : request.bodyValue(payloadValue))
+					.exchangeToMono(clientResponse -> {
+						status_code = clientResponse.rawStatusCode() + "";
+						return clientResponse.bodyToMono(ByteArrayResource.class);
+					})
+					.doOnError(error -> {
+						status_code = "500";
+						status_msg = error.getClass().getSimpleName()+ ": " +error.getMessage();
+						LOGGER.error(error.getClass().getSimpleName()+ ": " +error.getMessage(), error);
+					})
+					.block();
+
+			byte[] response_bytes = res.getByteArray();
+			String response_string = new String(response_bytes, StandardCharsets.UTF_8);
+			response_body = Utility.valid(response_string);
+			if (response_body == null) {
 				File file = Files.createTempFile(Utility.getPrefix(fileName), Utility.getSuffix(fileName)).toFile();
 				FileOutputStream fos = new FileOutputStream(file);
 				fos.write(response_bytes);
@@ -110,7 +151,6 @@ public class HttpFunction implements JavaDelegate {
 				status_code = "500";
 			}
 		}
-
 
 		if (debug)
 			endEvent(delegateExecution);
