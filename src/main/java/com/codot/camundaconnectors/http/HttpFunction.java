@@ -20,10 +20,12 @@ import reactor.netty.http.client.HttpClient;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class HttpFunction implements JavaDelegate {
@@ -116,11 +118,11 @@ public class HttpFunction implements JavaDelegate {
 				payloadValue = builder.build();
 			}
 
-			ByteArrayResource res = (HttpService.isBinaryFile(payload) ?
+			ByteBuffer res = (HttpService.isBinaryFile(payload) ?
 					request.body(HttpService.toBinaryBody(payload, delete)) : request.bodyValue(payloadValue))
 					.exchangeToMono(clientResponse -> {
 						status_code = clientResponse.rawStatusCode() + "";
-						return clientResponse.bodyToMono(ByteArrayResource.class);
+						return clientResponse.bodyToMono(ByteBuffer.class);
 					})
 					.doOnError(error -> {
 						status_code = "500";
@@ -128,22 +130,23 @@ public class HttpFunction implements JavaDelegate {
 						LOGGER.error(error.getClass().getSimpleName()+ ": " +error.getMessage(), error);
 					})
 					.block();
-
-			byte[] response_bytes = res.getByteArray();
-			String response_string = new String(response_bytes, StandardCharsets.UTF_8);
-			response_body = Utility.valid(response_string);
-			if (response_body == null) {
-				File file = Files.createTempFile(Utility.getPrefix(fileName), Utility.getSuffix(fileName)).toFile();
-				FileOutputStream fos = new FileOutputStream(file);
-				fos.write(response_bytes);
-				fos.close();
-				response_file_path = file.getName();
-				if (debug) LOGGER.info(Utility.printLog("File absolute path=" + file.getAbsolutePath(), delegateExecution));
-			}
+			if (!Objects.isNull(res)){
+				byte[] response_bytes = res.array();
+				String response_string = new String(response_bytes, StandardCharsets.UTF_8);
+				response_body = Utility.valid(response_string);
+				if (response_body == null) {
+					File file = Files.createTempFile(Utility.getPrefix(fileName), Utility.getSuffix(fileName)).toFile();
+					FileOutputStream fos = new FileOutputStream(file);
+					fos.write(response_bytes);
+					fos.close();
+					response_file_path = file.getName();
+					if (debug) LOGGER.info(Utility.printLog("File absolute path=" + file.getAbsolutePath(), delegateExecution));
+				}
+			} else { response_body = "";}
 		}
 		catch (Exception e) {
 			status_msg = e.toString();
-			LOGGER.error(Utility.printLog(status_msg, delegateExecution));
+			LOGGER.error(Utility.printLog(status_msg, delegateExecution), e);
 			if (e.getClass().getSimpleName().equals("SocketTimeoutException")) {
 				status_code = "504";
 			}
