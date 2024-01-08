@@ -15,6 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
@@ -23,6 +24,7 @@ import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -46,7 +48,7 @@ public class HttpFunction implements JavaDelegate {
 		boolean delete = Boolean.parseBoolean((String) delegateExecution.getVariable("delete"));
 
 		String url = (String) delegateExecution.getVariable("url");
-		int timeout = Integer.parseInt((String) delegateExecution.getVariable("timeout"));
+		long timeout = Long.parseLong((String) delegateExecution.getVariable("timeout"));
 		String fileName = (String) delegateExecution.getVariable("response_file_name");
 		String attachment = (String) delegateExecution.getVariable("attachment");
 
@@ -81,9 +83,18 @@ public class HttpFunction implements JavaDelegate {
 
 			WebClient client;
 			if (!ssl)
-				client = WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient)).build();
+				client = WebClient.builder().exchangeStrategies(
+						ExchangeStrategies.builder()
+								.codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(512 * 1024 * 1024))
+								.build()
+				).clientConnector(new ReactorClientHttpConnector(httpClient)).build();
 			else
-				client = WebClient.create();
+				client = WebClient.builder()
+						.exchangeStrategies(
+								ExchangeStrategies.builder()
+										.codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(512 * 1024 * 1024))
+										.build()
+						).build();
 
 
 			Map<String, String> finalHeaders = headers;
@@ -118,12 +129,14 @@ public class HttpFunction implements JavaDelegate {
 				payloadValue = builder.build();
 			}
 
+
 			ByteBuffer res = (HttpService.isBinaryFile(payload) ?
 					request.body(HttpService.toBinaryBody(payload, delete)) : request.bodyValue(payloadValue))
 					.exchangeToMono(clientResponse -> {
 						status_code = clientResponse.rawStatusCode() + "";
 						return clientResponse.bodyToMono(ByteBuffer.class);
 					})
+					.timeout(Duration.ofMillis(timeout))
 					.doOnError(error -> {
 						status_code = "500";
 						status_msg = error.getClass().getSimpleName()+ ": " +error.getMessage();
