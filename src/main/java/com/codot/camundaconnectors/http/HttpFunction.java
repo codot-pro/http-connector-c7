@@ -103,7 +103,7 @@ public class HttpFunction implements JavaDelegate {
 					.uri(url)
 					.headers(httpHeaders -> httpHeaders.setAll(finalHeaders));
 
-			Object payloadValue = payload;
+			Object payloadValue = payload == null ? "{}" : payload;
 			if (attachment != null) {
 				MultipartBodyBuilder builder = new MultipartBodyBuilder();
 				try {

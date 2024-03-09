@@ -71,11 +71,15 @@ class Utility {
 			}
 	};
 	static public String getPrefix(String fileName){
-		return fileName.substring(0, fileName.lastIndexOf(".")) + "-";
+		if (fileName.contains(".")) {
+			return fileName.substring(0, fileName.lastIndexOf(".")) + "-";
+		} else return fileName + "-";
 	}
 	static public String getSuffix(String fileName){
 		String[] nameParts = fileName.split("\\.");
-		return "."+nameParts[nameParts.length - 1];
+		if (nameParts.length > 1) {
+			return "." + nameParts[nameParts.length - 1];
+		} else return ".temp";
 	}
 
 
