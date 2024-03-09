@@ -20,7 +20,7 @@ public class HttpService {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpService.class);
 
     public static boolean isBinaryFile(String payload){
-        if (payload.isEmpty()){
+        if (payload == null || payload.isEmpty()){
             return false;
         }
         return (payload.startsWith("<<file>>="));
