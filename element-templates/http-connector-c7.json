@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
   "name": "http-connector",
   "id": "com.codot.camundaconnectors.http.c7",
-  "description": "CODOT HTTP Connector (v2.0.2)",
+  "description": "CODOT HTTP Connector (v2.1.0)",
   "version": 1,
   "entriesVisible": false,
   "appliesTo": [
@@ -201,8 +201,20 @@
         "source": "${response_body}"
       }
     },
-
-
+    {
+      "label": "response headers",
+      "description": "Name of variable to store the response in",
+      "group": "output",
+      "type": "String",
+      "value": "response_headers",
+      "constraints": {
+        "notEmpty": true
+      },
+      "binding": {
+        "type": "camunda:outputParameter",
+        "source": "${response_headers}"
+      }
+    },
     {
       "label": "response file path",
       "description": "Name of variable to store the response in",

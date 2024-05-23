@@ -11,10 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
@@ -29,6 +31,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.camunda.spin.Spin.S;
+
 @Component
 public class HttpFunction implements JavaDelegate {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpFunction.class);
@@ -37,7 +41,7 @@ public class HttpFunction implements JavaDelegate {
 	public String status_msg = "";
 	public Object response_body = null;
 	public String response_file_path = "";
-
+	MultiValueMap<String, String> responseHeaders = new HttpHeaders();
 
 
 
@@ -129,11 +133,11 @@ public class HttpFunction implements JavaDelegate {
 				payloadValue = builder.build();
 			}
 
-
 			ByteBuffer res = (HttpService.isBinaryFile(payload) ?
 					request.body(HttpService.toBinaryBody(payload, delete)) : request.bodyValue(payloadValue))
 					.exchangeToMono(clientResponse -> {
 						status_code = clientResponse.rawStatusCode() + "";
+						responseHeaders.addAll(clientResponse.headers().asHttpHeaders());
 						return clientResponse.bodyToMono(ByteBuffer.class);
 					})
 					.timeout(Duration.ofMillis(timeout))
@@ -178,6 +182,7 @@ public class HttpFunction implements JavaDelegate {
 		delegateExecution.setVariable("status_msg", status_msg);
 		delegateExecution.setVariable("response_body", response_body == null? "":response_body);
 		delegateExecution.setVariable("response_file_path", response_file_path);
+		delegateExecution.setVariable("response_headers", S(responseHeaders, "application/json"));
 	}
 
 	public void startEvent(String method, boolean ssl, boolean delete, String url, String payload, String headers,
