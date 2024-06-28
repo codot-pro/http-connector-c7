@@ -23,7 +23,7 @@ public class HttpService {
         if (payload == null || payload.isEmpty()){
             return false;
         }
-        return (payload.startsWith("<<file>>="));
+        return payload.startsWith("<<file>>=");
     }
 
     public static BodyInserter<Mono<DataBuffer>, ReactiveHttpOutputMessage> toBinaryBody(String filename, boolean delete) throws IOException {
@@ -50,5 +50,18 @@ public class HttpService {
             }
         }
         return payload;
+    }
+
+    public static void deleteTempFile(String fileName) {
+        File f = new File(System.getProperty("java.io.tmpdir"), fileName);
+        if (f.exists() && !f.isDirectory()) {
+            if (f.delete())
+                LOGGER.info("Temporary file {} deleted", fileName);
+            else
+                LOGGER.info("Temporary file {} not deleted", fileName);
+        }
+        else {
+            LOGGER.info("Temporary file {} not exists or is directory", fileName);
+        }
     }
 }

@@ -121,14 +121,13 @@ public class HttpFunction implements JavaDelegate {
 				}
 
 				try {
-					File f = new File(System.getProperty("java.io.tmpdir"), fileName);
+					File f = new File(System.getProperty("java.io.tmpdir"), attachment);
 					builder.part(fileName, new FileSystemResource(f));
 				} catch (Exception error){
 					status_code = "500";
 					status_msg = error.getClass().getSimpleName()+ ": " +error.getMessage();
 					LOGGER.error("File for attachment \"{}\" not found", fileName);
 				}
-
 
 				payloadValue = builder.build();
 			}
@@ -148,19 +147,20 @@ public class HttpFunction implements JavaDelegate {
 					})
 					.block();
 
-			if (HttpStatus.valueOf(Integer.parseInt(status_code)).is2xxSuccessful() && attachment != null && delete){
-				try {
-					File f = new File(System.getProperty("java.io.tmpdir"), fileName);
-					if (f.delete())
-						LOGGER.info("Temporary file {} deleted", fileName);
-					else
-						LOGGER.info("Temporary file not {} deleted", fileName);
-				} catch (Exception error){
-					status_code = "500";
-					status_msg = error.getClass().getSimpleName()+ ": " +error.getMessage();
-					LOGGER.error("File for attachment \"{}\" not found", fileName);
-				}
-			}
+			if (HttpStatus.valueOf(Integer.parseInt(status_code)).is2xxSuccessful() && delete)
+				if (attachment != null){
+					try {
+						HttpService.deleteTempFile(attachment);
+					} catch (Exception error){
+						status_code = "500";
+						status_msg = error.getClass().getSimpleName()+ ": " +error.getMessage();
+						LOGGER.error("File for attachment \"{}\" not found", fileName);
+					}
+				} else
+					if (HttpService.isBinaryFile(payload)) {
+						String binaryFileName = payload.replaceFirst("<<file>>=", "");
+						HttpService.deleteTempFile(binaryFileName);
+					}
 
 			if (!Objects.isNull(res)){
 				byte[] response_bytes = res.array();
