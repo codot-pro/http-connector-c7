@@ -13,6 +13,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
@@ -121,7 +122,6 @@ public class HttpFunction implements JavaDelegate {
 
 				try {
 					File f = new File(System.getProperty("java.io.tmpdir"), fileName);
-					if (delete) f.deleteOnExit();
 					builder.part(fileName, new FileSystemResource(f));
 				} catch (Exception error){
 					status_code = "500";
@@ -147,6 +147,21 @@ public class HttpFunction implements JavaDelegate {
 						LOGGER.error(error.getClass().getSimpleName()+ ": " +error.getMessage(), error);
 					})
 					.block();
+
+			if (HttpStatus.valueOf(Integer.parseInt(status_code)).is2xxSuccessful() && attachment != null && delete){
+				try {
+					File f = new File(System.getProperty("java.io.tmpdir"), fileName);
+					if (f.delete())
+						LOGGER.info("Temporary file {} deleted", fileName);
+					else
+						LOGGER.info("Temporary file not {} deleted", fileName);
+				} catch (Exception error){
+					status_code = "500";
+					status_msg = error.getClass().getSimpleName()+ ": " +error.getMessage();
+					LOGGER.error("File for attachment \"{}\" not found", fileName);
+				}
+			}
+
 			if (!Objects.isNull(res)){
 				byte[] response_bytes = res.array();
 				String response_string = new String(response_bytes, StandardCharsets.UTF_8);
