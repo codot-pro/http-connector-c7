@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
   "name": "http-connector",
   "id": "com.codot.camundaconnectors.http.c7",
-  "description": "CODOT HTTP Connector (v2.1.2)",
+  "description": "CODOT HTTP Connector (v2.2.0)",
   "version": 1,
   "entriesVisible": false,
   "appliesTo": [
@@ -277,6 +277,52 @@
       ],
       "group": "debug"
     },
+    {
+      "label": "Enable Two-way SSL",
+      "feel": "required",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "is2WaySsl"
+      },
+      "value": "false",
+      "constraints": {
+        "notEmpty": true
+      },
+      "type": "Dropdown",
+      "choices": [
+        {
+          "name": "enabled",
+          "value": "true"
+        },
+        {
+          "name": "disabled",
+          "value": "false"
+        }
+      ],
+      "group": "debug"
+    },
+    {
+      "label": "PKCS #12 cert path",
+      "type": "String",
+      "feel": "required",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "certPath"
+      },
+      "group": "debug"
+    },
+    {
+      "label": "PKCS #12 cert password",
+      "type": "String",
+      "feel": "required",
+      "binding": {
+        "type": "camunda:inputParameter",
+        "name": "certPass"
+      },
+      "group": "debug"
+    },
+
+
 
     {
       "label": "Async before?",

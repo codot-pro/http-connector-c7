@@ -1,15 +1,11 @@
 package com.codot.camundaconnectors.http;
 
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,7 +17,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
+import reactor.netty.resources.ConnectionProvider;
 
+import javax.net.ssl.SSLException;
+import javax.ws.rs.BadRequestException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
@@ -32,11 +31,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.codot.camundaconnectors.http.ReactorClientHttpConnectorConfig.*;
 import static org.camunda.spin.Spin.S;
 
 @Component
 public class HttpFunction implements JavaDelegate {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpFunction.class);
+	private static final ExchangeStrategies MEMORY_STRATEGY = ExchangeStrategies.builder()
+			.codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(512 * 1024 * 1024))
+			.build();
+
+	private static final ConnectionProvider TIME_PROVIDER = ConnectionProvider.builder("default")
+			.maxConnections(1000)
+			.maxIdleTime(Duration.ofSeconds(20))
+			.maxLifeTime(Duration.ofSeconds(60))
+			.pendingAcquireTimeout(Duration.ofSeconds(60))
+			.evictInBackground(Duration.ofSeconds(120)).build();
+
 
 	public String status_code = "";
 	public String status_msg = "";
@@ -49,8 +60,12 @@ public class HttpFunction implements JavaDelegate {
 	@Override
 	public void execute(DelegateExecution delegateExecution) {
 		boolean debug = Boolean.parseBoolean((String) delegateExecution.getVariable("debugMode"));
-		boolean ssl = Boolean.parseBoolean((String) delegateExecution.getVariable("validateSSL"));
 		boolean delete = Boolean.parseBoolean((String) delegateExecution.getVariable("delete"));
+
+		boolean sslValue = Boolean.parseBoolean((String) delegateExecution.getVariable("validateSSL"));
+		boolean is2WaySsl = Boolean.parseBoolean((String) delegateExecution.getVariable("is2WaySsl"));
+		String PKCS12_CERT_PATH = (String) delegateExecution.getVariable("certPath");
+		String PKCS12_CERT_PASS = (String) delegateExecution.getVariable("certPass");
 
 		String url = (String) delegateExecution.getVariable("url");
 		long timeout = Long.parseLong((String) delegateExecution.getVariable("timeout"));
@@ -63,7 +78,7 @@ public class HttpFunction implements JavaDelegate {
 
 		if (debug) startEvent(
 				(String) delegateExecution.getVariable("method"),
-				ssl, delete, url, payload, (String) delegateExecution.getVariable("headers"),
+				sslValue, delete, url, payload, (String) delegateExecution.getVariable("headers"),
 				fileName, delegateExecution);
 
 
@@ -78,29 +93,47 @@ public class HttpFunction implements JavaDelegate {
 			packRespond(delegateExecution);
 			return;
 		}
+
 		try {
 
-			SslContext sslContext = SslContextBuilder
-					.forClient()
-					.trustManager(InsecureTrustManagerFactory.INSTANCE)
-					.build();
-			HttpClient httpClient = HttpClient.create().secure(t -> t.sslContext(sslContext));
+			String ssl;
+			if (sslValue) {
+				if (is2WaySsl) {
+					ssl = "2waySsl";
+					if (PKCS12_CERT_PATH == null) throw new RuntimeException("Empty PKCS12 path");
+					if (PKCS12_CERT_PASS == null) throw new RuntimeException("Empty PKCS12 password");
+				}
+				else
+					ssl = "enable";
+			} else ssl = "disable";
 
 			WebClient client;
-			if (!ssl)
-				client = WebClient.builder().exchangeStrategies(
-						ExchangeStrategies.builder()
-								.codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(512 * 1024 * 1024))
-								.build()
-				).clientConnector(new ReactorClientHttpConnector(httpClient)).build();
-			else
-				client = WebClient.builder()
-						.exchangeStrategies(
-								ExchangeStrategies.builder()
-										.codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(512 * 1024 * 1024))
-										.build()
-						).build();
+			HttpClient httpClient = null;
 
+			switch (ssl){
+				case "enable":
+					client = WebClient.builder().exchangeStrategies(
+									MEMORY_STRATEGY
+							).clientConnector(getClient()).build();
+					break;
+				case "disable":
+					client = WebClient.builder().exchangeStrategies(
+							MEMORY_STRATEGY
+					).clientConnector(getClientWithoutSSL()).build();
+					break;
+
+				case "2waySsl":
+					client = WebClient.builder().exchangeStrategies(
+							MEMORY_STRATEGY
+					).clientConnector(getClient2WaySSL(PKCS12_CERT_PATH, PKCS12_CERT_PASS)).build();
+					break;
+
+				default:
+					status_msg = "Invalid ssl way";
+					LOGGER.error(Utility.printLog(status_msg, delegateExecution), "Invalid ssl way");
+					status_code = "500";
+					throw new RuntimeException("Invalid ssl way");
+			}
 
 			Map<String, String> finalHeaders = headers;
 			WebClient.RequestBodySpec request = client
