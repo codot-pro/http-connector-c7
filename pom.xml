@@ -3,25 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.7.9</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.10</version>
+        <relativePath/>
+    </parent>
 
-            <dependency>
-                <groupId>org.camunda.bpm</groupId>
-                <artifactId>camunda-bom</artifactId>
-                <version>7.19.0</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <modelVersion>4.0.0</modelVersion>
     <name>http-connector</name>
@@ -30,6 +18,7 @@
     <artifactId>http-connector-c7</artifactId>
     <version>2.2.0</version>
     <packaging>jar</packaging>
+
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -41,25 +30,31 @@
         <dependency>
             <groupId>org.camunda.bpm.springboot</groupId>
             <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
+            <version>7.19.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.camunda.bpm.springboot</groupId>
             <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
+            <version>7.19.0</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
+            <version>2.7.10</version>
         </dependency>
 
         <dependency>
             <groupId>org.camunda.bpm</groupId>
             <artifactId>camunda-engine-plugin-spin</artifactId>
+            <version>7.19.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.camunda.spin</groupId>
             <artifactId>camunda-spin-dataformat-all</artifactId>
+            <version>1.20.0</version>
         </dependency>
 
         <dependency>
@@ -93,4 +88,14 @@
             <version>1.7.36</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.7.10</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>
