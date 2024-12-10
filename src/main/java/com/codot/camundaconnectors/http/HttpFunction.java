@@ -78,7 +78,7 @@ public class HttpFunction implements JavaDelegate {
 
 		if (debug) startEvent(
 				(String) delegateExecution.getVariable("method"),
-				sslValue, delete, url, payload, (String) delegateExecution.getVariable("headers"),
+				sslValue || is2WaySsl, delete, url, payload, (String) delegateExecution.getVariable("headers"),
 				fileName, delegateExecution);
 
 
@@ -100,8 +100,6 @@ public class HttpFunction implements JavaDelegate {
 			if (sslValue) {
 				if (is2WaySsl) {
 					ssl = "2waySsl";
-					if (PKCS12_CERT_PATH == null) throw new RuntimeException("Empty PKCS12 path");
-					if (PKCS12_CERT_PASS == null) throw new RuntimeException("Empty PKCS12 password");
 				}
 				else
 					ssl = "enable";
@@ -109,6 +107,7 @@ public class HttpFunction implements JavaDelegate {
 
 			WebClient client;
 			HttpClient httpClient = null;
+
 
 			switch (ssl){
 				case "enable":
@@ -118,14 +117,14 @@ public class HttpFunction implements JavaDelegate {
 					break;
 				case "disable":
 					client = WebClient.builder().exchangeStrategies(
-							MEMORY_STRATEGY
-					).clientConnector(getClientWithoutSSL()).build();
+									MEMORY_STRATEGY
+							).clientConnector(getClientWithoutSSL()).build();
 					break;
 
 				case "2waySsl":
 					client = WebClient.builder().exchangeStrategies(
-							MEMORY_STRATEGY
-					).clientConnector(getClient2WaySSL(PKCS12_CERT_PATH, PKCS12_CERT_PASS)).build();
+									MEMORY_STRATEGY
+							).clientConnector(getClient2WaySSL(PKCS12_CERT_PATH, PKCS12_CERT_PASS, PKCS12_CERT_PASS != null)).build(); // null => false, pass - true
 					break;
 
 				default:
