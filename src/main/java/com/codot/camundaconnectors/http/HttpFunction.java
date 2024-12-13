@@ -1,5 +1,6 @@
 package com.codot.camundaconnectors.http;
 
+import com.codot.camundaconnectors.http.tls.StoreParams;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.json.JSONException;
@@ -13,10 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.netty.http.client.HttpClient;
-import reactor.netty.resources.ConnectionProvider;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,17 +32,6 @@ import static org.camunda.spin.Spin.S;
 @Component
 public class HttpFunction implements JavaDelegate {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpFunction.class);
-	private static final ExchangeStrategies MEMORY_STRATEGY = ExchangeStrategies.builder()
-			.codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(512 * 1024 * 1024))
-			.build();
-
-	private static final ConnectionProvider TIME_PROVIDER = ConnectionProvider.builder("default")
-			.maxConnections(1000)
-			.maxIdleTime(Duration.ofSeconds(20))
-			.maxLifeTime(Duration.ofSeconds(60))
-			.pendingAcquireTimeout(Duration.ofSeconds(60))
-			.evictInBackground(Duration.ofSeconds(120)).build();
-
 
 	public String status_code = "";
 	public String status_msg = "";
@@ -56,84 +43,78 @@ public class HttpFunction implements JavaDelegate {
 
 	@Override
 	public void execute(DelegateExecution delegateExecution) {
-		boolean debug = Boolean.parseBoolean((String) delegateExecution.getVariable("debugMode"));
-		boolean delete = Boolean.parseBoolean((String) delegateExecution.getVariable("delete"));
+		//Input Mapping
+		HttpMethod method = HttpMethod.valueOf((String) delegateExecution.getVariable("method"));           // Method
+		String url = (String) delegateExecution.getVariable("url");                                         // URL
+		String jsonHeaders = (String) delegateExecution.getVariable("headers");                             // Headers
+		long timeout = Long.parseLong((String) delegateExecution.getVariable("timeout"));                   // Timeout
+		String payload = HttpService.getPayloadFromObj(delegateExecution.getVariable("payload"));           // Payload
+		String fileName = (String) delegateExecution.getVariable("response_file_name");                     // Response file name
+		String attachment = (String) delegateExecution.getVariable("attachment");                           // Attach file
+		boolean deleteAttachment = Boolean.parseBoolean((String) delegateExecution.getVariable("delete"));  // Delete attachment?
 
-		boolean sslValue = Boolean.parseBoolean((String) delegateExecution.getVariable("validateSSL"));
-		boolean is2WaySsl = Boolean.parseBoolean((String) delegateExecution.getVariable("is2WaySsl"));
-		String PKCS12_CERT_PATH = (String) delegateExecution.getVariable("certPath");
-		String PKCS12_CERT_PASS = (String) delegateExecution.getVariable("certPass");
+		// Debug tools
+		boolean debug = Boolean.parseBoolean((String) delegateExecution.getVariable("debugMode"));          // Debug mode
 
-		String url = (String) delegateExecution.getVariable("url");
-		long timeout = Long.parseLong((String) delegateExecution.getVariable("timeout"));
-		String fileName = (String) delegateExecution.getVariable("response_file_name");
-		String attachment = (String) delegateExecution.getVariable("attachment");
-
-
-		Object payloadObj = delegateExecution.getVariable("payload");
-		String payload = HttpService.getPayloadFromObj(payloadObj);
+		// TLS - Settings
+		boolean validateSSL = Boolean.parseBoolean((String) delegateExecution.getVariable("validateSSL"));  // Validate SSL
+		boolean is2WaySsl = Boolean.parseBoolean((String) delegateExecution.getVariable("is2WaySsl"));      // Enable Two-way SSL
 
 		if (debug) startEvent(
-				(String) delegateExecution.getVariable("method"),
-				sslValue || is2WaySsl, delete, url, payload, (String) delegateExecution.getVariable("headers"),
+				method.toString(),
+				validateSSL || is2WaySsl, deleteAttachment, url, payload, jsonHeaders,
 				fileName, delegateExecution);
 
-
-		Map<String, String> headers = new HashMap<>();
 		try {
-			String headersString = (String) delegateExecution.getVariable("headers");
-			if (headersString != null)
-				headers = Utility.parseHeaders(headersString);
-		} catch (JSONException e){
-			status_code = "400";
-			status_msg = "Bad request. Invalid headers";
-			packRespond(delegateExecution);
-			return;
-		}
+			Map<String, String> headers = new HashMap<>();
+			try {
+				if (jsonHeaders != null)
+					headers = Utility.parseHeaders(jsonHeaders);
+			} catch (JSONException e){
+				status_code = "400";
+				status_msg = "Bad request. Invalid headers";
+				packRespond(delegateExecution);
+				return;
+			}
 
-		try {
-
-			String ssl;
-			if (sslValue) {
-				if (is2WaySsl) {
-					ssl = "2waySsl";
-				}
-				else
-					ssl = "enable";
-			} else ssl = "disable";
-
+			String ssl = validateSSL ? (is2WaySsl ? "2waySsl" : "enable") : "disable";
 			WebClient client;
-			HttpClient httpClient = null;
 
+            LOGGER.info("SSL: {}", ssl);
 
 			switch (ssl){
 				case "enable":
-					client = WebClient.builder().exchangeStrategies(
-									MEMORY_STRATEGY
-							).clientConnector(getClient()).build();
+					client = createWebClientWithConnector(getClient());
 					break;
 				case "disable":
-					client = WebClient.builder().exchangeStrategies(
-									MEMORY_STRATEGY
-							).clientConnector(getClientWithoutSSL()).build();
+					client = createWebClientWithConnector(getClientWithoutSSL());
 					break;
-
 				case "2waySsl":
-					client = WebClient.builder().exchangeStrategies(
-									MEMORY_STRATEGY
-							).clientConnector(getClient2WaySSL(PKCS12_CERT_PATH, PKCS12_CERT_PASS, PKCS12_CERT_PASS != null)).build(); // null => false, pass - true
-					break;
+					StoreParams keyStoreParams = new StoreParams(
+							(String) delegateExecution.getVariable("keyStoreType"), // Key Store type
+							(String) delegateExecution.getVariable("keyStorePath"), // Key Store path
+							(String) delegateExecution.getVariable("keyStorePass")  // Key Store password
+					);
 
+					StoreParams trustedStoreParams = new StoreParams(
+							(String) delegateExecution.getVariable("trustedStoreType"), // Trusted Store type
+							(String) delegateExecution.getVariable("trustedStorePath"), // Trusted Store path
+							(String) delegateExecution.getVariable("trustedStorePass")  // Trusted Store password
+					);
+					// using cacerts IF (path && password) empty
+					if (trustedStoreParams.isEmpty()) trustedStoreParams.toDefaultJKS();
+
+					client = createWebClientWithConnector(getClient2WaySSL(keyStoreParams, trustedStoreParams));
+					break;
 				default:
-					status_msg = "Invalid ssl way";
-					LOGGER.error(Utility.printLog(status_msg, delegateExecution), "Invalid ssl way");
+					status_msg = "Invalid SSL configuration: " + ssl;
 					status_code = "500";
-					throw new RuntimeException("Invalid ssl way");
+					throw new RuntimeException(status_msg);
 			}
 
 			Map<String, String> finalHeaders = headers;
 			WebClient.RequestBodySpec request = client
-					.method(HttpMethod.valueOf((String) delegateExecution.getVariable("method")))
+					.method(method)
 					.uri(url)
 					.headers(httpHeaders -> httpHeaders.setAll(finalHeaders));
 
@@ -162,7 +143,7 @@ public class HttpFunction implements JavaDelegate {
 			}
 
 			ByteBuffer res = (HttpService.isBinaryFile(payload) ?
-					request.body(HttpService.toBinaryBody(payload, delete)) : request.bodyValue(payloadValue))
+					request.body(HttpService.toBinaryBody(payload, deleteAttachment)) : request.bodyValue(payloadValue))
 					.exchangeToMono(clientResponse -> {
 						status_code = clientResponse.rawStatusCode() + "";
 						responseHeaders.addAll(clientResponse.headers().asHttpHeaders());
@@ -176,7 +157,7 @@ public class HttpFunction implements JavaDelegate {
 					})
 					.block();
 
-			if (HttpStatus.valueOf(Integer.parseInt(status_code)).is2xxSuccessful() && delete)
+			if (HttpStatus.valueOf(Integer.parseInt(status_code)).is2xxSuccessful() && deleteAttachment)
 				if (attachment != null){
 					try {
 						HttpService.deleteTempFile(attachment);
