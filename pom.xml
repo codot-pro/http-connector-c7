@@ -16,7 +16,7 @@
     <description>CODOT HTTP Connector</description>
     <groupId>com.codot.camundaconnectors.http</groupId>
     <artifactId>http-connector-c7</artifactId>
-    <version>2.2.1</version>
+    <version>2.3.0</version>
     <packaging>jar</packaging>
 
     <properties>

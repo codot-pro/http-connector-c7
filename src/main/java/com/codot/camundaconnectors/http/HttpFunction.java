@@ -11,7 +11,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.MultipartBodyBuilder;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -19,8 +18,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
 
-import javax.net.ssl.SSLException;
-import javax.ws.rs.BadRequestException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
