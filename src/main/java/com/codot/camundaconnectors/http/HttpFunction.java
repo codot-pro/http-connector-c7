@@ -80,8 +80,6 @@ public class HttpFunction implements JavaDelegate {
 			String ssl = validateSSL ? (is2WaySsl ? "2waySsl" : "enable") : "disable";
 			WebClient client;
 
-            LOGGER.info("SSL: {}", ssl);
-
 			switch (ssl){
 				case "enable":
 					client = createWebClientWithConnector(getClient());
@@ -132,11 +130,11 @@ public class HttpFunction implements JavaDelegate {
 
 				try {
 					File f = new File(System.getProperty("java.io.tmpdir"), attachment);
-					builder.part(fileName, new FileSystemResource(f));
+					builder.part(attachment, new FileSystemResource(f));
 				} catch (Exception error){
 					status_code = "500";
 					status_msg = error.getClass().getSimpleName()+ ": " +error.getMessage();
-					LOGGER.error("File for attachment \"{}\" not found", fileName);
+					LOGGER.error("File for attachment \"{}\" not found", attachment);
 				}
 
 				payloadValue = builder.build();
