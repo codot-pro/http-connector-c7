@@ -60,6 +60,14 @@
             {
                "name": "DELETE",
                "value": "DELETE"
+            },
+            {
+               "name": "PATCH",
+               "value": "PATCH"
+            },
+            {
+               "name": "PUT",
+               "value": "PUT"
             }
          ],
          "binding": {
@@ -282,74 +290,6 @@
          "group": "tls"
       },
       {
-         "label": "Key Store type",
-         "feel": "required",
-         "binding": {
-            "type": "camunda:inputParameter",
-            "name": "keyStoreType"
-         },
-         "value": "PKCS12",
-         "constraints": {
-            "notEmpty": true
-         },
-         "type": "Dropdown",
-         "choices": [
-            {
-               "name": "PKCS12",
-               "value": "PKCS12"
-            },
-            {
-               "name": "JKS",
-               "value": "JKS"
-            }
-         ],
-         "group": "tls"
-      },
-      {
-         "label": "Key Store path",
-         "type": "String",
-         "feel": "required",
-         "binding": {
-            "type": "camunda:inputParameter",
-            "name": "keyStorePath"
-         },
-         "group": "tls"
-      },
-      {
-         "label": "Key Store password",
-         "type": "String",
-         "feel": "required",
-         "binding": {
-            "type": "camunda:inputParameter",
-            "name": "keyStorePass"
-         },
-         "group": "tls"
-      },
-      {
-         "label": "Enable Two-way SSL",
-         "feel": "required",
-         "binding": {
-            "type": "camunda:inputParameter",
-            "name": "is2WaySsl"
-         },
-         "value": "false",
-         "constraints": {
-            "notEmpty": true
-         },
-         "type": "Dropdown",
-         "choices": [
-            {
-               "name": "enabled",
-               "value": "true"
-            },
-            {
-               "name": "disabled",
-               "value": "false"
-            }
-         ],
-         "group": "tls"
-      },
-      {
          "label": "Trusted Store type",
          "feel": "required",
          "binding": {
@@ -390,6 +330,74 @@
          "binding": {
             "type": "camunda:inputParameter",
             "name": "trustedStorePass"
+         },
+         "group": "tls"
+      },
+      {
+         "label": "Enable Two-way SSL",
+         "feel": "required",
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "is2WaySsl"
+         },
+         "value": "false",
+         "constraints": {
+            "notEmpty": true
+         },
+         "type": "Dropdown",
+         "choices": [
+            {
+               "name": "enabled",
+               "value": "true"
+            },
+            {
+               "name": "disabled",
+               "value": "false"
+            }
+         ],
+         "group": "tls"
+      },
+      {
+         "label": "Key Store type",
+         "feel": "required",
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "keyStoreType"
+         },
+         "value": "PKCS12",
+         "constraints": {
+            "notEmpty": true
+         },
+         "type": "Dropdown",
+         "choices": [
+            {
+               "name": "PKCS12",
+               "value": "PKCS12"
+            },
+            {
+               "name": "JKS",
+               "value": "JKS"
+            }
+         ],
+         "group": "tls"
+      },
+      {
+         "label": "Key Store path",
+         "type": "String",
+         "feel": "required",
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "keyStorePath"
+         },
+         "group": "tls"
+      },
+      {
+         "label": "Key Store password",
+         "type": "String",
+         "feel": "required",
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "keyStorePass"
          },
          "group": "tls"
       },

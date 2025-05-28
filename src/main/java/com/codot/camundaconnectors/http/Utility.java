@@ -79,8 +79,6 @@ class Utility {
 		String[] nameParts = fileName.split("\\.");
 		if (nameParts.length > 1) {
 			return "." + nameParts[nameParts.length - 1];
-		} else return ".temp";
+		} else return "";
 	}
-
-
 }
