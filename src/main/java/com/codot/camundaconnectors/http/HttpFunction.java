@@ -39,8 +39,6 @@ public class HttpFunction implements JavaDelegate {
 	public String response_file_path = "";
 	MultiValueMap<String, String> responseHeaders = new HttpHeaders();
 
-
-
 	@Override
 	public void execute(DelegateExecution delegateExecution) {
 		//Input Mapping

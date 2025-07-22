@@ -6,7 +6,6 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.client.reactive.ClientHttpConnector;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -38,10 +37,6 @@ public class ReactorClientHttpConnectorConfig {
             .pendingAcquireTimeout(Duration.ofSeconds(60))
             .evictInBackground(Duration.ofSeconds(120)).build();
 
-    private static final String JKS_CA_PASS = "";//(System.getenv("JKS_CA_PASS") == null ? "changeit" :  System.getenv("JKS_CA_PASS")).toCharArray();
-    private static final String JKS_CA_PATH = System.getenv("JKS_CA_PATH");
-    private static final Path JKS_CA_FILE = Paths.get(JKS_CA_PATH, "cacerts");
-
     // https://medium.com/@nazeer.arus18/consuming-a-secure-api-with-mutual-tls-authentication-in-spring-boot-6ad45d7adb92
     public static ReactorClientHttpConnector getClient2WaySSL(StoreParams keyStoreParams, StoreParams trustedStoreParams) {
         ConnectionProvider provider = ConnectionProvider.builder("elastic")
@@ -59,8 +54,6 @@ public class ReactorClientHttpConnectorConfig {
             LOGGER.info("getType: {}", trustedStoreParams.getType());
             LOGGER.info("getPath: {}", trustedStoreParams.getPath());
             LOGGER.info("getPass: {}", trustedStoreParams.getPass());
-
-
 
             // KEY Store params
             KeyStore keyStore = KeyStore.getInstance(keyStoreParams.getType());
