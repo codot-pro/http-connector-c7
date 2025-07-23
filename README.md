@@ -2,8 +2,7 @@
 HTTP Connector for Camunda 7
 
 ### Recommended Requirement:
-- Maven: latest or 3.3.*+
-- JDK:   1.8 (52)
+- JDK:   17
 
 ## Deploying the HTTP Connector
 
@@ -21,25 +20,25 @@ After build, we can find .jar in ./target/ folder
 You can create a **Maven** project and add a **dependency** to run the connector
 
     <dependency>
-        <groupId>com.codot.camundaconnectors.http</groupId>
-        <artifactId>http-connector-c7</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <groupId>com.codot.camundaconnectors</groupId>
+        <artifactId>modern-http-connector-c7</artifactId>
+        <version></version>
     </dependency>
 
 #### Start SpringBootApplication
 ```bash
-mvn exec:java -Dexec.mainClass="com.codot.camundaconnectors.http.Main"
+mvn exec:java -Dexec.mainClass="com.codot.connectors.http.Main"
 ```
 
 #### Add .jar to Camunda 7 dir
 After build, we can find .jar in ./target/ folder.
-Place the .jar with other .jars and don't forget to add the missing libraries as needed.
+Place the .jar with other .jar`s and don't forget to add the missing libraries as needed.
 
 ## Connector template
 
 To add a template to Camunda Modeler, you need to open the application
 **modeler_root_folder/resources/element-templates** and put inside the template from
-**http-connector-c7/element-templates** with the name **http-connector-c7.json**.
+**http-connector-c7/element-templates** with the name **modern-http-connector-c7.json**.
 
 Reload the application, and you will be able to assign a template.
 
@@ -63,6 +62,7 @@ Reload the application, and you will be able to assign a template.
   - If the response is not a file, then the response will be written to the **response body**
 - Attachments
   - for attach file: file1.pdf
+
 ### Output data
 
 > It is important to fill in **all fields**
@@ -79,8 +79,4 @@ Reload the application, and you will be able to assign a template.
 ### Debug mode
 If you enable debug mode, then in the logs you will see logs with input and output data. They will be in the format [processDefinitionKey : processDefinitionVersion : currentActivityName : processInstanceId]: { output/input variables...}
 
-## Example
 
-![Inputs!](./assets/images/inputs.png "Inputs")
-
-![Outputs!](./assets/images/outputs.png "Outputs")
