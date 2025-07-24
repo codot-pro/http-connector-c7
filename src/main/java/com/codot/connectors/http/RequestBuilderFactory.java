@@ -19,8 +19,7 @@ public class RequestBuilderFactory {
 
     public static RequestBuilder create(Properties properties, WebClient webClient) {
         try {
-            String json = properties.getProperty(PAYLOAD);
-            Payload payload = objectMapper.readValue(json, Payload.class);
+            Payload payload = mappingPayload(properties);
 
             return switch (payload.getType().toLowerCase()) {
                 case PAYLOAD_TYPE_MULTIPART -> new MultipartRequestBuilder(webClient, properties);
@@ -31,5 +30,10 @@ public class RequestBuilderFactory {
         } catch (JsonProcessingException e) {
             throw new ProcessEngineException("Payload cannot be cast to Payload.class");
         }
+    }
+
+    public static Payload mappingPayload(Properties properties) throws JsonProcessingException {
+        String json = properties.getProperty(PAYLOAD);
+        return objectMapper.readValue(json, Payload.class);
     }
 }
