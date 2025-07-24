@@ -6,13 +6,10 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.XML;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import static org.camunda.spin.Spin.S;
 
 public class Utils {
     public static String printLog(String msg, DelegateExecution execution) {

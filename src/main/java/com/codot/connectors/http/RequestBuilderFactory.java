@@ -2,8 +2,8 @@ package com.codot.connectors.http;
 
 import com.codot.connectors.http.request.RequestBuilder;
 import com.codot.connectors.http.request.impl.BinaryRequestBuilder;
-import com.codot.connectors.http.request.impl.TextRequestBuilder;
 import com.codot.connectors.http.request.impl.MultipartRequestBuilder;
+import com.codot.connectors.http.request.impl.TextRequestBuilder;
 import com.codot.connectors.http.request.payload.Payload;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

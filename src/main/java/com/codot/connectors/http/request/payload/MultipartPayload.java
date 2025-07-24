@@ -7,7 +7,8 @@ import lombok.Getter;
 
 import java.util.List;
 
-import static com.codot.connectors.http.HttpConnectorConstants.*;
+import static com.codot.connectors.http.HttpConnectorConstants.PAYLOAD_KEY_TYPE;
+import static com.codot.connectors.http.HttpConnectorConstants.PAYLOAD_MULTIPART;
 
 @Getter
 public class MultipartPayload implements Payload {

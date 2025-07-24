@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
-import static com.codot.connectors.http.HttpConnectorConstants.*;
+import static com.codot.connectors.http.HttpConnectorConstants.PAYLOAD_KEY_TEXT;
+import static com.codot.connectors.http.HttpConnectorConstants.PAYLOAD_KEY_TYPE;
 
 @Getter
 public class TextPayload implements Payload {

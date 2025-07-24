@@ -5,7 +5,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Properties;
 
-import static com.codot.connectors.http.HttpConnectorConstants.*;
+import static com.codot.connectors.http.HttpConnectorConstants.HEADERS;
+import static com.codot.connectors.http.HttpConnectorConstants.URL;
 
 
 public abstract class AbstractRequestBuilder implements RequestBuilder {
