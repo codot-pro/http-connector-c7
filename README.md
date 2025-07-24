@@ -54,31 +54,39 @@ Reload the application, and you will be able to assign a template.
 - Headers (json)
 - Payload
     - Type 'text'
-      ```text
-      { * content * }
+      ```json
+      {
+         "type": "text",
+         "text": "{ * content * }"
+      }
       ```
 
     - Type 'binary'
       ```json
       {
-         "file": "path/to/file.bin"  
+         "type": "binary",
+         "file": "path/to/file.bin"
       }
       ```
 
     - Type 'multipart'
       ```json
-      [
-         {
-            "key": "myFile",
-            "type": "file",
-            "file": "path/to/file.txt"
-         },
-         {
-            "key": "myKey",
-            "type": "text",
-            "text": "{ * content * }"
-         }
-      ]
+      {
+         "type": "multipart",
+         "parts": [
+            {
+               "key": "myFile",
+               "type": "file",
+               "file": "path/to/file.txt"
+            },
+            {
+               "key": "myKey",
+               "type": "text",
+               "text": "{ * content * }"
+            }
+         ]
+      }
+
       ```
 
 - Timeout
