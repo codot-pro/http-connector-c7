@@ -108,4 +108,13 @@ public class RequestBuilderFactoryTest {
 
         assertEquals("{ * content * }", tPayload.getText());
     }
+
+    @Test
+    public void mappingToNullTest() throws JsonProcessingException {
+        Properties properties = new Properties();
+
+        Payload payload = RequestBuilderFactory.mappingPayload(properties);
+
+        assertEquals("text", payload.getType());
+    }
 }

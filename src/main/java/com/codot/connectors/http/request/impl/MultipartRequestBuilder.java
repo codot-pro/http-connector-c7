@@ -1,40 +1,28 @@
 package com.codot.connectors.http.request.impl;
 
 import com.codot.connectors.http.request.AbstractRequestBuilder;
-import org.springframework.http.HttpMethod;
+import com.codot.connectors.http.request.payload.MultipartPayload;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Properties;
 
-import static com.codot.connectors.http.HttpConnectorConstants.METHOD;
-
 public class MultipartRequestBuilder extends AbstractRequestBuilder {
+    private final MultipartPayload payload;
 
-    public MultipartRequestBuilder(WebClient webClient, Properties properties) {
+    public MultipartRequestBuilder(WebClient webClient, Properties properties, MultipartPayload payload) {
         super(webClient, properties);
+        this.payload = payload;
     }
 
     @Override
     public WebClient.RequestHeadersSpec<?> build() {
-        WebClient.RequestBodyUriSpec spec = webClient.method(HttpMethod.valueOf(
-                properties.getProperty(METHOD, "POST")));
-
-
-
-        applyCommonProperties(spec, properties);
+        WebClient.RequestBodySpec spec = applyCommonProperties(properties);
 
         MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
 
-        // Приклад: payload має вигляд "field1=value1;field2=value2"
-//        String payload = properties.getProperty("payload", "");
-//        for (String pair : payload.split(";")) {
-//            String[] kv = pair.split("=", 2);
-//            if (kv.length == 2) {
-//                bodyBuilder.part(kv[0].trim(), kv[1].trim());
-//            }
-//        }
+        // TODO: process each part of payload
 
         return spec.body(BodyInserters.fromMultipartData(bodyBuilder.build()));
     }

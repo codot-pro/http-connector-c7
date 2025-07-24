@@ -24,6 +24,7 @@ public class HttpConnectorConstants {
     public static final String PAYLOAD_TYPE_TEXT = "text";
     public static final String PAYLOAD_TYPE_MULTIPART = "multipart";
     public static final String PAYLOAD_TYPE_BINARY = "binary";
+    public static final String PAYLOAD_TYPE_EMPTY = "empty";
 
     // PAYLOAD KEYS
     public static final String PAYLOAD_KEY_TYPE = "type";

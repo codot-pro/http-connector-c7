@@ -1,33 +1,25 @@
 package com.codot.connectors.http.request.impl;
 
 import com.codot.connectors.http.request.AbstractRequestBuilder;
-import org.springframework.http.HttpMethod;
+import com.codot.connectors.http.request.payload.TextPayload;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Properties;
-import java.util.Set;
-
-import static com.codot.connectors.http.HttpConnectorConstants.METHOD;
 
 public class TextRequestBuilder extends AbstractRequestBuilder {
+    private final TextPayload payload;
 
-    public TextRequestBuilder(WebClient webClient, Properties properties) {
+    public TextRequestBuilder(WebClient webClient, Properties properties, TextPayload payload) {
         super(webClient, properties);
+        this.payload = payload;
     }
 
     @Override
     public WebClient.RequestHeadersSpec<?> build() {
-        WebClient.RequestBodyUriSpec spec = webClient.method(HttpMethod.valueOf(
-                properties.getProperty(METHOD, "GET")));
+        WebClient.RequestHeadersSpec<?> spec = applyCommonProperties(properties);
 
-        applyCommonProperties(spec, properties);
+        // TODO: process payload
 
-        String method = properties.getProperty(METHOD, "GET").toUpperCase();
-        if (Set.of("POST", "PUT", "PATCH").contains(method)) {
-            String body = properties.getProperty("payload", "{}");
-            return spec.bodyValue(body);
-        } else {
-            return spec;
-        }
+        return spec;
     }
 }
