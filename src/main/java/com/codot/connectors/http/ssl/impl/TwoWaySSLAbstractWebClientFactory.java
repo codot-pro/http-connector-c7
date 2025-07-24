@@ -8,7 +8,7 @@ import java.util.Properties;
 
 import static com.codot.connectors.http.HttpConnectorConstants.*;
 
-public class TwoWaySSLWebClientFactoryImpl extends WebClientFactoryImpl {
+public class TwoWaySSLAbstractWebClientFactory extends AbstractWebClientFactory {
     @Override
     public WebClient create(Properties sslProperties) {
         StoreParams keyStoreParams = new StoreParams(

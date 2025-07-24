@@ -6,7 +6,7 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 
 import java.util.Properties;
 
-public abstract class WebClientFactoryImpl implements WebClientFactory {
+public abstract class AbstractWebClientFactory implements WebClientFactory {
     protected final ExchangeStrategies MEMORY_STRATEGY = ExchangeStrategies.builder()
             .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(512 * 1024 * 1024))
             .build();

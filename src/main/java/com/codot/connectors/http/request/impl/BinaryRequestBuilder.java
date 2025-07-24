@@ -3,6 +3,7 @@ package com.codot.connectors.http.request.impl;
 import com.codot.connectors.http.request.AbstractRequestBuilder;
 import com.codot.connectors.http.request.payload.BinaryPayload;
 import org.springframework.web.reactive.function.client.WebClient;
+
 import java.util.Properties;
 
 public class BinaryRequestBuilder extends AbstractRequestBuilder {

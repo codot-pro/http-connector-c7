@@ -110,11 +110,11 @@ public class RequestBuilderFactoryTest {
     }
 
     @Test
-    public void mappingToNullTest() throws JsonProcessingException {
+    public void mappingToEmptyPayloadTest() throws JsonProcessingException {
         Properties properties = new Properties();
 
         Payload payload = RequestBuilderFactory.mappingPayload(properties);
 
-        assertEquals("text", payload.getType());
+        assertEquals("empty", payload.getType());
     }
 }

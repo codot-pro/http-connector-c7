@@ -5,12 +5,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Properties;
 
-public class SSLWebClientFactoryImpl extends WebClientFactoryImpl {
+public class NoSSLAbstractWebClientFactory extends AbstractWebClientFactory {
     @Override
     public WebClient create(Properties sslProperties) {
         return WebClient.builder()
                 .exchangeStrategies(MEMORY_STRATEGY)
-                .clientConnector(HttpClientFactory.getClient())
+                .clientConnector(HttpClientFactory.getClientWithoutSSL())
                 .build();
     }
 }

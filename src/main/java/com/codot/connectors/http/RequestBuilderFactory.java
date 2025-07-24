@@ -38,7 +38,6 @@ public class RequestBuilderFactory {
         String json = properties.getProperty(PAYLOAD);
         if (json != null)
             return objectMapper.readValue(json, Payload.class);
-        else
-            return new EmptyPayload();
+        return new EmptyPayload();
     }
 }
