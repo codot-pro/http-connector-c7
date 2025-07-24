@@ -65,7 +65,16 @@ Reload the application, and you will be able to assign a template.
       ```json
       {
          "type": "binary",
-         "file": "path/to/file.bin"
+         "filePath": "path/to/file.txt",
+         "delete": true
+      }
+      ```
+      or
+      ```json
+      {
+         "type": "binary",
+         "fileName": "file.bin",
+         "delete": true
       }
       ```
 
@@ -75,9 +84,16 @@ Reload the application, and you will be able to assign a template.
          "type": "multipart",
          "parts": [
             {
-               "key": "myFile",
+               "key": "myFile1",
                "type": "file",
-               "file": "path/to/file.txt"
+               "filePath": "path/to/file.txt",
+               "delete": true
+            },
+            {
+               "key": "myFile2",
+               "type": "file",
+               "fileName": "file.txt",
+               "delete": true
             },
             {
                "key": "myKey",

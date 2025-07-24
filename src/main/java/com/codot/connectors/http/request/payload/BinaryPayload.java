@@ -3,19 +3,25 @@ package com.codot.connectors.http.request.payload;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import org.camunda.bpm.engine.ProcessEngineException;
 
-import static com.codot.connectors.http.HttpConnectorConstants.PAYLOAD_KEY_FILE;
-import static com.codot.connectors.http.HttpConnectorConstants.PAYLOAD_KEY_TYPE;
+import java.io.File;
+
+import static com.codot.connectors.http.HttpConnectorConstants.*;
 
 @Getter
-public class BinaryPayload implements Payload {
+public class BinaryPayload extends AbstractFilePathQualifier implements Payload {
     private final String type;
-    private final String file;
+    private final Boolean delete;
 
     @JsonCreator
     public BinaryPayload(@JsonProperty(PAYLOAD_KEY_TYPE) String type,
-                         @JsonProperty(PAYLOAD_KEY_FILE) String file) {
+                         @JsonProperty(PAYLOAD_KEY_FILE_NAME) String fileName,
+                         @JsonProperty(PAYLOAD_KEY_FILE_PATH) String filePath,
+                         @JsonProperty(PAYLOAD_KEY_DELETE) Boolean delete
+    ) {
+        super(filePath, fileName);
         this.type = type;
-        this.file = file;
+        this.delete = delete;
     }
 }

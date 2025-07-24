@@ -14,31 +14,37 @@ import java.util.Properties;
 
 import static com.codot.connectors.http.HttpConnectorConstants.PAYLOAD;
 import static com.codot.connectors.http.HttpConnectorConstants.PAYLOAD_TYPE_MULTIPART;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class RequestBuilderFactoryTest {
     String multipartPayload = """
         {
-           "type": "multipart",
-           "parts": [
-              {
-                 "key": "myFile",
-                 "type": "file",
-                 "file": "filename.txt"
-              },
-              {
-                 "key": "myKey",
-                 "type": "text",
-                 "text": "{ * content * }"
-              }
-           ]
+            "type": "multipart",
+            "parts": [
+                {
+                   "key": "myFile1",
+                   "type": "file",
+                   "filePath": "path/to/file.txt",
+                   "delete": true
+                },
+                {
+                   "key": "myFile2",
+                   "type": "file",
+                   "fileName": "file.txt",
+                   "delete": true
+                },
+                {
+                   "key": "myKey",
+                   "type": "text",
+                   "text": "{ * content * }"
+                }
+            ]
         }
         """;
     String binaryPayload = """
         {
           "type": "binary",
-          "file": "path/to/file.bin"
+          "filePath": "path/to/file.bin"
         }
         """;
     String textPayload = """
@@ -59,20 +65,19 @@ public class RequestBuilderFactoryTest {
 
         MultipartPayload mPayload = (MultipartPayload) payload;
 
-        assertEquals(2, mPayload.getParts().size());
+        assertEquals(3, mPayload.getParts().size());
 
         MultipartPart part1 = mPayload.getParts().get(0);
-        MultipartPart part2 = mPayload.getParts().get(1);
+        MultipartPart part3 = mPayload.getParts().get(2);
 
         assertTrue(part1 instanceof MultipartFilePart);
-        assertTrue(part2 instanceof MultipartTextPart);
+        assertTrue(part3 instanceof MultipartTextPart);
 
         MultipartFilePart filePart = (MultipartFilePart) part1;
-        MultipartTextPart textPart = (MultipartTextPart) part2;
+        MultipartTextPart textPart = (MultipartTextPart) part3;
 
-        assertEquals("myFile", filePart.getKey());
+        assertEquals("myFile1", filePart.getKey());
         assertEquals("file", filePart.getType());
-        assertEquals("filename.txt", filePart.getFile());
 
         assertEquals("myKey", textPart.getKey());
         assertEquals("text", textPart.getType());
@@ -91,7 +96,8 @@ public class RequestBuilderFactoryTest {
 
         BinaryPayload bPayload = (BinaryPayload) payload;
 
-        assertEquals("path/to/file.bin", bPayload.getFile());
+        assertEquals("path/to/file.bin", bPayload.getFilePath());
+        assertNull(bPayload.getFileName());
     }
 
     @Test

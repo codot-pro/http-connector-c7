@@ -29,12 +29,17 @@ public class HttpConnectorConstants {
     // PAYLOAD KEYS
     public static final String PAYLOAD_KEY_TYPE = "type";
     public static final String PAYLOAD_KEY_TEXT = "text";
-    public static final String PAYLOAD_KEY_FILE = "file";
+    public static final String PAYLOAD_KEY_FILE_NAME = "fileName";
+    public static final String PAYLOAD_KEY_FILE_PATH = "filePath";
+    public static final String PAYLOAD_KEY_DELETE = "delete";
     public static final String PAYLOAD_MULTIPART = "parts";
     public static final String PAYLOAD_MULTIPART_KEY = "key";
     public static final String PAYLOAD_MULTIPART_TYPE = "type";
     public static final String PAYLOAD_MULTIPART_TEXT = "text";
     public static final String PAYLOAD_MULTIPART_FILE = "file";
+    public static final String PAYLOAD_MULTIPART_FILE_NAME = "fileName";
+    public static final String PAYLOAD_MULTIPART_FILE_PATH = "filePath";
+    public static final String PAYLOAD_MULTIPART_DELETE = "delete";
 
     // SSL_TYPE values
     public static final String SSL_TYPE_ENABLED = "enable";
@@ -46,9 +51,4 @@ public class HttpConnectorConstants {
     public static final String OUTPUT_RESPONSE_TYPE = "responseType";
     public static final String OUTPUT_RESPONSE = "response";
     public static final String OUTPUT_HEADERS = "headers";
-
-    // OUTPUT_RESPONSE_TYPE values
-    public static final String OUTPUT_RESPONSE_TYPE_FILE = "file";
-    public static final String OUTPUT_RESPONSE_TYPE_JSON = "json";
-    public static final String OUTPUT_RESPONSE_TYPE_XML = "xml";
 }
