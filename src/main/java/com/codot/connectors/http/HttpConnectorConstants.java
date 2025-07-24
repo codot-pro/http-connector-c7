@@ -7,9 +7,8 @@ public class HttpConnectorConstants {
     public static final String HEADERS = "headers";
     public static final String TIMEOUT = "timeout";
     public static final String PAYLOAD = "payload";
+    public static final String PAYLOAD_TYPE = "payloadType";
     public static final String RESPONSE_FILE_NAME = "responseFileName";
-    public static final String ATTACHMENT = "attachment";
-    public static final String DELETE = "delete";
     public static final String DEBUG_MODE = "debugMode";
 
     public static final String SSL_TYPE = "sslType";
@@ -22,8 +21,24 @@ public class HttpConnectorConstants {
     public static final String KEY_STORE_PATH = "keyStorePath";
     public static final String KEY_STORE_PASS = "keyStorePass";
 
+    // PAYLOAD_TYPE values
+    public static final String PAYLOAD_TYPE_DEFAULT = "default";
+    public static final String PAYLOAD_TYPE_MULTIPART = "multipart";
+    public static final String PAYLOAD_TYPE_BINARY = "binary";
+
     // SSL_TYPE values
     public static final String SSL_TYPE_ENABLED = "enable";
     public static final String SSL_TYPE_DISABLE = "disable";
     public static final String SSL_TYPE_TWO_WAY_SSL = "2waySsl";
+
+    // OUTPUT
+    public static final String OUTPUT_STATUS_CODE = "statusCode";
+    public static final String OUTPUT_RESPONSE_TYPE = "responseType";
+    public static final String OUTPUT_RESPONSE = "response";
+    public static final String OUTPUT_HEADERS = "headers";
+
+    // OUTPUT_RESPONSE_TYPE values
+    public static final String OUTPUT_RESPONSE_TYPE_FILE = "file";
+    public static final String OUTPUT_RESPONSE_TYPE_JSON = "json";
+    public static final String OUTPUT_RESPONSE_TYPE_XML = "xml";
 }

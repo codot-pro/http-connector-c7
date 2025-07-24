@@ -24,9 +24,8 @@ public class InputParametersImpl implements InputParameters {
     @Expose private final String headers;
     @Expose private final String timeout;
     @Expose private final String payload;
+    @Expose private final String payloadType;
     @Expose private final String responseFileName;
-    @Expose private final String attachment;
-    @Expose private final String delete;
     @Expose private final String sslType;
 
     @Expose private final String trustedStoreType;
@@ -43,9 +42,8 @@ public class InputParametersImpl implements InputParameters {
         headers             = (String) execution.getVariable(HEADERS);
         timeout             = (String) execution.getVariable(TIMEOUT);
         payload             = (String) execution.getVariable(PAYLOAD);
+        payloadType         = (String) execution.getVariable(PAYLOAD_TYPE);
         responseFileName    = (String) execution.getVariable(RESPONSE_FILE_NAME);
-        attachment          = (String) execution.getVariable(ATTACHMENT);
-        delete              = (String) execution.getVariable(DELETE);
         sslType             = (String) execution.getVariable(SSL_TYPE);
 
         trustedStoreType    = (String) execution.getVariable(TRUSTED_STORE_TYPE);

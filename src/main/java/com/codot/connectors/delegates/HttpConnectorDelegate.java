@@ -30,5 +30,29 @@ public class HttpConnectorDelegate implements JavaDelegate {
         InputParameters inputParameters = new InputParametersImpl(execution, debug);
 
         WebClient webClient = webClientFactoryProvider.getClient(inputParameters.getSslProperties());
+
+        // Builder запиту
+            // Method
+            // URL
+            // Headers
+            // body:
+                // default
+                // multipart
+                // binary
+            // method
+                // GET
+                // DELETE
+
+                // POST
+                // PUT
+                // PATCH
+
+            // timeout
+
+
+
+        // Обробка відповіді
+
+        // Збереження
     }
 }
