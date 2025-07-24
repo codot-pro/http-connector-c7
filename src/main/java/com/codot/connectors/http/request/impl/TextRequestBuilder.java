@@ -9,20 +9,20 @@ import java.util.Set;
 
 import static com.codot.connectors.http.HttpConnectorConstants.METHOD;
 
-public class DefaultRequestBuilder extends AbstractRequestBuilder {
+public class TextRequestBuilder extends AbstractRequestBuilder {
 
-    public DefaultRequestBuilder(WebClient webClient) {
-        super(webClient);
+    public TextRequestBuilder(WebClient webClient, Properties properties) {
+        super(webClient, properties);
     }
 
     @Override
-    public WebClient.RequestHeadersSpec<?> build(Properties properties) {
+    public WebClient.RequestHeadersSpec<?> build() {
         WebClient.RequestBodyUriSpec spec = webClient.method(HttpMethod.valueOf(
                 properties.getProperty(METHOD, "GET")));
 
         applyCommonProperties(spec, properties);
 
-        String method = properties.getProperty("method", "GET").toUpperCase();
+        String method = properties.getProperty(METHOD, "GET").toUpperCase();
         if (Set.of("POST", "PUT", "PATCH").contains(method)) {
             String body = properties.getProperty("payload", "{}");
             return spec.bodyValue(body);

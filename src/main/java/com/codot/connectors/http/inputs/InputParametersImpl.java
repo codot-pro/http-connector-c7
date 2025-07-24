@@ -24,7 +24,6 @@ public class InputParametersImpl implements InputParameters {
     @Expose private final String headers;
     @Expose private final String timeout;
     @Expose private final String payload;
-    @Expose private final String payloadType;
     @Expose private final String responseFileName;
     @Expose private final String sslType;
 
@@ -39,10 +38,9 @@ public class InputParametersImpl implements InputParameters {
     public InputParametersImpl(DelegateExecution execution, boolean debug) {
         method              = (String) execution.getVariable(METHOD);
         url                 = (String) execution.getVariable(URL);
-        headers             = (String) execution.getVariable(HEADERS);
         timeout             = (String) execution.getVariable(TIMEOUT);
+        headers             = (String) execution.getVariable(HEADERS);
         payload             = (String) execution.getVariable(PAYLOAD);
-        payloadType         = (String) execution.getVariable(PAYLOAD_TYPE);
         responseFileName    = (String) execution.getVariable(RESPONSE_FILE_NAME);
         sslType             = (String) execution.getVariable(SSL_TYPE);
 
@@ -61,7 +59,13 @@ public class InputParametersImpl implements InputParameters {
     public Properties getRequestProperties() {
         Properties properties = new Properties();
 
+        properties.put(METHOD, method);
+        properties.put(URL, url);
 
+        Optional.ofNullable(timeout).ifPresent(v -> properties.put(TIMEOUT, v));
+        Optional.ofNullable(headers).ifPresent(v -> properties.put(HEADERS, v));
+        Optional.ofNullable(payload).ifPresent(v -> properties.put(PAYLOAD, v));
+        Optional.ofNullable(responseFileName).ifPresent(v -> properties.put(RESPONSE_FILE_NAME, v));
 
         return properties;
     }

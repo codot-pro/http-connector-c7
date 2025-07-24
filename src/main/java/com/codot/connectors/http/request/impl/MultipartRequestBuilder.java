@@ -12,14 +12,16 @@ import static com.codot.connectors.http.HttpConnectorConstants.METHOD;
 
 public class MultipartRequestBuilder extends AbstractRequestBuilder {
 
-    public MultipartRequestBuilder(WebClient webClient) {
-        super(webClient);
+    public MultipartRequestBuilder(WebClient webClient, Properties properties) {
+        super(webClient, properties);
     }
 
     @Override
-    public WebClient.RequestHeadersSpec<?> build(Properties properties) {
+    public WebClient.RequestHeadersSpec<?> build() {
         WebClient.RequestBodyUriSpec spec = webClient.method(HttpMethod.valueOf(
                 properties.getProperty(METHOD, "POST")));
+
+
 
         applyCommonProperties(spec, properties);
 

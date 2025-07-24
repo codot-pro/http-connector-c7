@@ -2,8 +2,12 @@ package com.codot.connectors.http;
 
 import com.codot.connectors.http.request.RequestBuilder;
 import com.codot.connectors.http.request.impl.BinaryRequestBuilder;
-import com.codot.connectors.http.request.impl.DefaultRequestBuilder;
+import com.codot.connectors.http.request.impl.TextRequestBuilder;
 import com.codot.connectors.http.request.impl.MultipartRequestBuilder;
+import com.codot.connectors.http.request.payload.Payload;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.camunda.bpm.engine.ProcessEngineException;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Properties;
@@ -11,13 +15,21 @@ import java.util.Properties;
 import static com.codot.connectors.http.HttpConnectorConstants.*;
 
 public class RequestBuilderFactory {
-    public static RequestBuilder create(Properties properties, WebClient webClient) {
-        String type = properties.getProperty(PAYLOAD_TYPE, PAYLOAD_TYPE_DEFAULT);
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-        return switch (type.toLowerCase()) {
-            case PAYLOAD_TYPE_MULTIPART -> new MultipartRequestBuilder(webClient);
-            case PAYLOAD_TYPE_BINARY -> new BinaryRequestBuilder(webClient);
-            default -> new DefaultRequestBuilder(webClient);
-        };
+    public static RequestBuilder create(Properties properties, WebClient webClient) {
+        try {
+            String json = properties.getProperty(PAYLOAD);
+            Payload payload = objectMapper.readValue(json, Payload.class);
+
+            return switch (payload.getType().toLowerCase()) {
+                case PAYLOAD_TYPE_MULTIPART -> new MultipartRequestBuilder(webClient, properties);
+                case PAYLOAD_TYPE_BINARY -> new BinaryRequestBuilder(webClient, properties);
+                case PAYLOAD_TYPE_TEXT -> new TextRequestBuilder(webClient, properties);
+                default -> throw new ProcessEngineException("Not supported type: " + payload.getType());
+            };
+        } catch (JsonProcessingException e) {
+            throw new ProcessEngineException("Payload cannot be cast to Payload.class");
+        }
     }
 }

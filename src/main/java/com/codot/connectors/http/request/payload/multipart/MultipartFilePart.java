@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
+import static com.codot.connectors.http.HttpConnectorConstants.*;
+
 @Getter
 public class MultipartFilePart implements MultipartPart {
     private final String type;
@@ -12,9 +14,9 @@ public class MultipartFilePart implements MultipartPart {
 
     @JsonCreator
     public MultipartFilePart(
-            @JsonProperty("type") String type,
-            @JsonProperty("key") String key,
-            @JsonProperty("file") String file
+            @JsonProperty(PAYLOAD_MULTIPART_TYPE) String type,
+            @JsonProperty(PAYLOAD_MULTIPART_KEY) String key,
+            @JsonProperty(PAYLOAD_MULTIPART_FILE) String file
     ) {
         this.type = type;
         this.key = key;

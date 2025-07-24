@@ -7,7 +7,6 @@ public class HttpConnectorConstants {
     public static final String HEADERS = "headers";
     public static final String TIMEOUT = "timeout";
     public static final String PAYLOAD = "payload";
-    public static final String PAYLOAD_TYPE = "payloadType";
     public static final String RESPONSE_FILE_NAME = "responseFileName";
     public static final String DEBUG_MODE = "debugMode";
 
@@ -22,9 +21,19 @@ public class HttpConnectorConstants {
     public static final String KEY_STORE_PASS = "keyStorePass";
 
     // PAYLOAD_TYPE values
-    public static final String PAYLOAD_TYPE_DEFAULT = "default";
+    public static final String PAYLOAD_TYPE_TEXT = "text";
     public static final String PAYLOAD_TYPE_MULTIPART = "multipart";
     public static final String PAYLOAD_TYPE_BINARY = "binary";
+
+    // PAYLOAD KEYS
+    public static final String PAYLOAD_KEY_TYPE = "type";
+    public static final String PAYLOAD_KEY_TEXT = "text";
+    public static final String PAYLOAD_KEY_FILE = "file";
+    public static final String PAYLOAD_MULTIPART = "parts";
+    public static final String PAYLOAD_MULTIPART_KEY = "key";
+    public static final String PAYLOAD_MULTIPART_TYPE = "type";
+    public static final String PAYLOAD_MULTIPART_TEXT = "text";
+    public static final String PAYLOAD_MULTIPART_FILE = "file";
 
     // SSL_TYPE values
     public static final String SSL_TYPE_ENABLED = "enable";

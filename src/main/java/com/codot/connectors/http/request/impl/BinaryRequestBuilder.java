@@ -17,12 +17,12 @@ import static com.codot.connectors.http.HttpConnectorConstants.METHOD;
 
 public class BinaryRequestBuilder extends AbstractRequestBuilder {
 
-    public BinaryRequestBuilder(WebClient webClient) {
-        super(webClient);
+    public BinaryRequestBuilder(WebClient webClient, Properties properties) {
+        super(webClient, properties);
     }
 
     @Override
-    public WebClient.RequestHeadersSpec<?> build(Properties properties) {
+    public WebClient.RequestHeadersSpec<?> build() {
         WebClient.RequestBodyUriSpec spec = webClient.method(HttpMethod.valueOf(
                 properties.getProperty(METHOD, "POST")));
 

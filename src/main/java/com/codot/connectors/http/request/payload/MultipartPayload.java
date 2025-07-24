@@ -7,6 +7,8 @@ import lombok.Getter;
 
 import java.util.List;
 
+import static com.codot.connectors.http.HttpConnectorConstants.*;
+
 @Getter
 public class MultipartPayload implements Payload {
     private final String type;
@@ -14,8 +16,8 @@ public class MultipartPayload implements Payload {
 
     @JsonCreator
     public MultipartPayload(
-            @JsonProperty("type") String type,
-            @JsonProperty("parts") List<MultipartPart> parts) {
+            @JsonProperty(PAYLOAD_KEY_TYPE) String type,
+            @JsonProperty(PAYLOAD_MULTIPART) List<MultipartPart> parts) {
         this.type = type;
         this.parts = parts;
     }
