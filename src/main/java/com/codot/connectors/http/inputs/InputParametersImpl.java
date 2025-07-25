@@ -91,6 +91,11 @@ public class InputParametersImpl implements InputParameters {
         return timeout;
     }
 
+    @Override
+    public String getExpectedFileName() {
+        return responseFileName;
+    }
+
     public String toString() {
         return gson.toJson(this);
     }

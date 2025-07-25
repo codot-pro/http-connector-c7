@@ -10,7 +10,6 @@ import org.camunda.spin.DataFormats;
 import org.camunda.spin.Spin;
 import org.camunda.spin.impl.json.jackson.JacksonJsonNode;
 import org.springframework.http.HttpHeaders;
-import org.springframework.util.MultiValueMap;
 
 import static com.codot.connectors.http.HttpConnectorConstants.*;
 import static org.camunda.spin.Spin.S;
@@ -32,13 +31,13 @@ public class OutputParametersImpl implements OutputParameters{
     @Override
     public void save(DelegateExecution e) {
 
-        e.setVariable(OUTPUT_STATUS_CODE, statusCode);
-        e.setVariable(OUTPUT_RESPONSE_TYPE, responseType);
+        e.setVariable((String) e.getVariable(OUTPUT_VARIABLE_STATUS_CODE), statusCode);
+        e.setVariable((String) e.getVariable(OUTPUT_VARIABLE_RESPONSE_TYPE), responseType);
 
-        e.setVariable(OUTPUT_RESPONSE, response);
+        e.setVariable((String) e.getVariable(OUTPUT_VARIABLE_RESPONSE), response);
 
         if (headers != null)
-            e.setVariable(OUTPUT_HEADERS, S(headers, DataFormats.JSON_DATAFORMAT_NAME));
+            e.setVariable((String) e.getVariable(OUTPUT_VARIABLE_HEADERS), S(headers, DataFormats.JSON_DATAFORMAT_NAME));
     }
 
     @Override

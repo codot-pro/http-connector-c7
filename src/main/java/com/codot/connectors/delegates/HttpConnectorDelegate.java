@@ -8,7 +8,6 @@ import com.codot.connectors.http.outputs.OutputParametersImpl;
 import com.codot.connectors.http.response.ResponseHandler;
 import com.codot.connectors.http.response.ResponseHandlerFactoryProvider;
 import com.codot.connectors.utils.Utils;
-import javassist.bytecode.ByteArray;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;

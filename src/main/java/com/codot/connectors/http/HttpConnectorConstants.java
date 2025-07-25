@@ -46,14 +46,14 @@ public class HttpConnectorConstants {
     public static final String SSL_TYPE_DISABLE = "disable";
     public static final String SSL_TYPE_TWO_WAY_SSL = "2waySsl";
 
-    // OUTPUT
-    public static final String OUTPUT_STATUS_CODE = "statusCode";
-    public static final String OUTPUT_RESPONSE_TYPE = "responseType";
-    public static final String OUTPUT_RESPONSE = "response";
-    public static final String OUTPUT_HEADERS = "headers";
-
     // RESPONSE TYPE
     public static final String OUTPUT_RESPONSE_TYPE_FILE = "file";
     public static final String OUTPUT_RESPONSE_TYPE_JSON = "json";
     public static final String OUTPUT_RESPONSE_TYPE_XML = "xml";
+
+    // OUTPUT VARIABLES
+    public static final String OUTPUT_VARIABLE_STATUS_CODE = "outputStatusCode";
+    public static final String OUTPUT_VARIABLE_RESPONSE_TYPE = "outputResponseType";
+    public static final String OUTPUT_VARIABLE_RESPONSE = "outputResponse";
+    public static final String OUTPUT_VARIABLE_HEADERS = "outputHeaders";
 }
