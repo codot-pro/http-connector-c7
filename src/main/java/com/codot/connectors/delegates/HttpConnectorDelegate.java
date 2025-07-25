@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.nio.ByteBuffer;
 import java.time.Duration;
@@ -51,14 +50,14 @@ public class HttpConnectorDelegate implements JavaDelegate {
         AtomicReference<OutputParametersImpl> output = new AtomicReference<>(outputParameters);
 
         ByteBuffer body = request
-                .exchangeToMono(Mono::just)
-                .flatMap(r -> responseHandler.processResponse(r, output.get()))
+                .exchangeToMono(r -> responseHandler.processResponse(r, output.get()))
                 .timeout(Duration.ofMillis(inputParameters.getTimeout()))
                 .doOnError(error -> responseHandler.handleError(error, output.get()))
                 .block();
 
         if (body != null) {
             responseHandlerFactoryProvider.getHandler(body).handle(outputParameters, inputParameters.getExpectedFileName());
+            System.out.println(9);
         }
         outputParameters.save(execution);
     }

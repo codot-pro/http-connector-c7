@@ -5,7 +5,10 @@ import com.codot.connectors.http.request.impl.BinaryRequestBuilder;
 import com.codot.connectors.http.request.impl.MultipartRequestBuilder;
 import com.codot.connectors.http.request.impl.NoBodyRequestBuilder;
 import com.codot.connectors.http.request.impl.TextRequestBuilder;
-import com.codot.connectors.http.request.payload.*;
+import com.codot.connectors.http.request.payload.BinaryPayload;
+import com.codot.connectors.http.request.payload.EmptyPayload;
+import com.codot.connectors.http.request.payload.MultipartPayload;
+import com.codot.connectors.http.request.payload.Payload;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.camunda.bpm.engine.ProcessEngineException;
@@ -25,12 +28,11 @@ public class RequestBuilderFactory {
             return switch (payload.getType().toLowerCase()) {
                 case PAYLOAD_TYPE_MULTIPART -> new MultipartRequestBuilder(webClient, properties, (MultipartPayload) payload);
                 case PAYLOAD_TYPE_BINARY -> new BinaryRequestBuilder(webClient, properties, (BinaryPayload) payload);
-                case PAYLOAD_TYPE_TEXT -> new TextRequestBuilder(webClient, properties, (TextPayload) payload);
                 case PAYLOAD_TYPE_EMPTY -> new NoBodyRequestBuilder(webClient, properties);
                 default -> throw new ProcessEngineException("Unexpected value: " + payload.getType().toLowerCase());
             };
         } catch (JsonProcessingException e) {
-            throw new ProcessEngineException("Payload cannot be cast to Payload.class");
+            return new TextRequestBuilder(webClient, properties, properties.getProperty(PAYLOAD));
         }
     }
 

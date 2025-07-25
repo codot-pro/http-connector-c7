@@ -23,11 +23,8 @@ public class FileContainer {
     }
 
     public FileContainer(File f) {
-        if (f.exists()){
-            fileName = f.getName();
-            filePath = f.getAbsolutePath();
-        }
-        throw new ProcessEngineException("File not found");
+        fileName = f.getName();
+        filePath = f.getAbsolutePath();
     }
 
     public File getFile() {

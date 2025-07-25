@@ -46,9 +46,8 @@ public class FileResponseHandlerImpl extends AbstractResponseHandlerFactory {
         fileName = Objects.requireNonNullElseGet(
                 expectedFileName,
                 () -> fileNameFromHeader == null ?
-                        "unknown" :
-                        fileNameFromHeader + qualifyFileSuffix(output.getHeaders().getContentType()));
-
+                        "unknown." + qualifyFileSuffix(output.getHeaders().getContentType()):
+                        fileNameFromHeader);
 
         try {
             File file = Files.createTempFile(Utils.getPrefix(fileName), Utils.getSuffix(fileName)).toFile();
@@ -56,6 +55,7 @@ public class FileResponseHandlerImpl extends AbstractResponseHandlerFactory {
             fos.write(buffer.array());
             fos.close();
 
+            output.setResponseType(responseType);
             output.setResponse(S(new FileContainer(file).toString()));
         } catch (IOException e) {
             throw new ProcessEngineException(e);
@@ -71,6 +71,7 @@ public class FileResponseHandlerImpl extends AbstractResponseHandlerFactory {
         if (type == null){
             return "temp";
         }
-        return suffixes.getOrDefault(type, "temp");
+
+        return suffixes.getOrDefault(MediaType.valueOf(type.getType() + "/" + type.getSubtype()), "temp");
     }
 }

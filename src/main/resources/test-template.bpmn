@@ -1,54 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0haevpk" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.13.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0haevpk" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
   <bpmn:process id="TestHttpConnectorTemplate" name="HTTP connector test" isExecutable="true" camunda:versionTag="v9" camunda:historyTimeToLive="3">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_0wij7gk</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="Flow_0wij7gk" sourceRef="StartEvent_1" targetRef="Activity_03mntty" />
-    <bpmn:sequenceFlow id="Flow_1187hd1" sourceRef="Activity_03mntty" targetRef="Event_1gz2ozn" />
+    <bpmn:sequenceFlow id="Flow_0wij7gk" sourceRef="StartEvent_1" targetRef="Activity_1vhqsfk" />
+    <bpmn:sequenceFlow id="Flow_1187hd1" sourceRef="Activity_1vhqsfk" targetRef="Activity_0a69upd" />
     <bpmn:endEvent id="Event_1gz2ozn">
-      <bpmn:incoming>Flow_1187hd1</bpmn:incoming>
+      <bpmn:incoming>Flow_11mb3gr</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="Activity_03mntty" name="HttpConnector" camunda:modelerTemplate="com.codot.camundaconnectors.http.c7" camunda:modelerTemplateVersion="1" camunda:class="com.codot.camundaconnectors.http.HttpFunction">
+    <bpmn:serviceTask id="Activity_1vhqsfk" name="Mock GET request" camunda:modelerTemplate="com.codot.connectors.c7-modern-http-connector-v3.0" camunda:modelerTemplateVersion="1" camunda:class="com.codot.connectors.delegates.HttpConnectorDelegate">
       <bpmn:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="timeout">60000</camunda:inputParameter>
-          <camunda:inputParameter name="payload" />
-          <camunda:inputParameter name="debugMode">true</camunda:inputParameter>
-          <camunda:inputParameter name="validateSSL">true</camunda:inputParameter>
+          <camunda:inputParameter name="headers">{"Content-Type": "application/json"}</camunda:inputParameter>
+          <camunda:inputParameter name="timeout">5000</camunda:inputParameter>
+          <camunda:inputParameter name="responseFileName" />
+          <camunda:inputParameter name="debugMode">false</camunda:inputParameter>
+          <camunda:inputParameter name="tlsSettings"></camunda:inputParameter>
+          <camunda:inputParameter name="tlsType">enable</camunda:inputParameter>
           <camunda:inputParameter name="method">GET</camunda:inputParameter>
-          <camunda:inputParameter name="headers">{"Content-Type":"application/json"}</camunda:inputParameter>
-          <camunda:inputParameter name="response_file_name">article.pdf</camunda:inputParameter>
-          <camunda:inputParameter name="attachment">my-attached.file</camunda:inputParameter>
-          <camunda:inputParameter name="url">https://webhook.site/a44b06a6-788b-44b5-b20b-1e99de30b203</camunda:inputParameter>
-          <camunda:outputParameter name="status_code">${status_code}</camunda:outputParameter>
-          <camunda:outputParameter name="status_msg">${status_msg}</camunda:outputParameter>
-          <camunda:outputParameter name="response_body">${response_body}</camunda:outputParameter>
-          <camunda:outputParameter name="response_file_path">${response_file_path}</camunda:outputParameter>
+          <camunda:inputParameter name="payload" />
+          <camunda:inputParameter name="url">https://mpe52114c06b4d7d56b0.free.beeceptor.com</camunda:inputParameter>
+          <camunda:outputParameter name="outputStatusCode">${outputStatusCode}</camunda:outputParameter>
+          <camunda:outputParameter name="outputResponseType">${outputResponseType}</camunda:outputParameter>
+          <camunda:outputParameter name="outputResponse">${outputResponse}</camunda:outputParameter>
+          <camunda:outputParameter name="outputHeaders">${outputHeaders}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0wij7gk</bpmn:incoming>
       <bpmn:outgoing>Flow_1187hd1</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_11mb3gr" sourceRef="Activity_0a69upd" targetRef="Event_1gz2ozn" />
+    <bpmn:userTask id="Activity_0a69upd">
+      <bpmn:incoming>Flow_1187hd1</bpmn:incoming>
+      <bpmn:outgoing>Flow_11mb3gr</bpmn:outgoing>
+    </bpmn:userTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="TestHttpConnectorTemplate">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="179" y="99" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0fot7lw_di" bpmnElement="Activity_03mntty">
-        <dc:Bounds x="270" y="77" width="100" height="80" />
+        <dc:Bounds x="152" y="102" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1gz2ozn_di" bpmnElement="Event_1gz2ozn">
-        <dc:Bounds x="402" y="99" width="36" height="36" />
+        <dc:Bounds x="642" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ac1hp5_di" bpmnElement="Activity_1vhqsfk">
+        <dc:Bounds x="320" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0gtdofk_di" bpmnElement="Activity_0a69upd">
+        <dc:Bounds x="490" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0wij7gk_di" bpmnElement="Flow_0wij7gk">
-        <di:waypoint x="215" y="117" />
-        <di:waypoint x="270" y="117" />
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="320" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1187hd1_di" bpmnElement="Flow_1187hd1">
-        <di:waypoint x="370" y="117" />
-        <di:waypoint x="402" y="117" />
+        <di:waypoint x="420" y="120" />
+        <di:waypoint x="490" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11mb3gr_di" bpmnElement="Flow_11mb3gr">
+        <di:waypoint x="590" y="120" />
+        <di:waypoint x="642" y="120" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

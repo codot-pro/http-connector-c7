@@ -25,7 +25,7 @@ public abstract class AbstractRequestBuilder implements RequestBuilder {
         WebClient.RequestBodySpec uriSpec = spec.uri(uri);
 
         String headers = props.getProperty(HEADERS);
-        if (headers != null && !headers.isBlank())
+        if (headers != null && !headers.isBlank() && !headers.equals("{}"))
             uriSpec.headers(httpHeaders -> httpHeaders.setAll(Utils.parseHeaders(headers)));
 
         return spec;

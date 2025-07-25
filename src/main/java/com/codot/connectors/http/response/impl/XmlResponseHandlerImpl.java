@@ -8,6 +8,7 @@ import static org.camunda.spin.Spin.S;
 public class XmlResponseHandlerImpl extends AbstractResponseHandlerFactory {
     @Override
     public void handle(OutputParametersImpl output, String expectedFileName) {
+        output.setResponseType(responseType);
         output.setResponse(S(response));
     }
 

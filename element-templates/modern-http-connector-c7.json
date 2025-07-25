@@ -1,8 +1,8 @@
 {
    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
-   "name": "http-connector",
-   "id": "com.codot.camundaconnectors.http.c7",
-   "description": "CODOT HTTP Connector (v2.3.0)",
+   "name": "modern-http-connector",
+   "id": "com.codot.connectors.c7-modern-http-connector-v3.0",
+   "description": "CODOT http connector (v3.0.0)",
    "version": 1,
    "entriesVisible": false,
    "appliesTo": [
@@ -17,7 +17,7 @@
          "label": "Input Mapping"
       },
       {
-         "id": "output",
+         "id": "outputs",
          "label": "Output Mapping"
       },
       {
@@ -25,19 +25,19 @@
          "label": "Debug tools"
       },
       {
-         "id": "async",
-         "label": "Asynchronous continuations"
-      },
-      {
          "id": "tls",
          "label": "TLS - Settings"
+      },
+      {
+         "id": "async",
+         "label": "Asynchronous continuations"
       }
    ],
    "properties": [
       {
          "label": "Implementation Type",
          "type": "Hidden",
-         "value": "com.codot.camundaconnectors.http.HttpFunction",
+         "value": "com.codot.connectors.delegates.HttpConnectorDelegate",
          "editable": false,
          "binding": {
             "type": "property",
@@ -93,10 +93,10 @@
          "group": "inputs"
       },
       {
-         "label": "Headers",
+         "label": "Headers (JSON)",
          "type": "Text",
          "feel": "required",
-         "value": "{\"Content-Type\":\"application/json\"}",
+         "value": "{\"Content-Type\": \"application/json\"}",
          "binding": {
             "type": "camunda:inputParameter",
             "name": "headers"
@@ -107,7 +107,7 @@
          "label": "Timeout",
          "type": "String",
          "feel": "required",
-         "value": "60000",
+         "value": "5000",
          "binding": {
             "type": "camunda:inputParameter",
             "name": "timeout"
@@ -128,118 +128,66 @@
          "group": "inputs"
       },
       {
-         "label": "Response file name",
+         "label": "Expected file name",
          "type": "String",
          "feel": "required",
          "binding": {
             "type": "camunda:inputParameter",
-            "name": "response_file_name"
-         },
-         "constraints": {
-            "notEmpty": true
+            "name": "responseFileName"
          },
          "group": "inputs"
       },
       {
-         "label": "Attach file",
+         "label": "Status code",
+         "group": "outputs",
          "type": "String",
-         "value": "",
-         "feel": "required",
-         "binding": {
-            "type": "camunda:inputParameter",
-            "name": "attachment"
-         },
-         "group": "inputs"
-      },
-      {
-         "label": "Delete attached file?",
-         "binding": {
-            "type": "camunda:inputParameter",
-            "name": "delete"
-         },
-         "value": "false",
-         "type": "Dropdown",
-         "choices": [
-            {
-               "name": "TRUE",
-               "value": "true"
-            },
-            {
-               "name": "FALSE",
-               "value": "false"
-            }
-         ],
-         "group": "inputs"
-      },
-      {
-         "label": "status code",
-         "description": "Name of variable to store the response in",
-         "group": "output",
-         "type": "String",
-         "value": "status_code",
+         "value": "outputStatusCode",
          "constraints": {
             "notEmpty": true
          },
          "binding": {
             "type": "camunda:outputParameter",
-            "source": "${status_code}"
+            "source": "${outputStatusCode}"
          }
       },
       {
-         "label": "status massage",
-         "description": "Name of variable to store the response in",
-         "group": "output",
+         "label": "Response type",
          "type": "String",
-         "value": "status_msg",
+         "value": "outputResponseType",
+         "binding": {
+            "type": "camunda:outputParameter",
+            "source": "${outputResponseType}"
+         },
          "constraints": {
             "notEmpty": true
          },
-         "binding": {
-            "type": "camunda:outputParameter",
-            "source": "${status_msg}"
-         }
+         "group": "outputs"
       },
       {
-         "label": "response body",
-         "description": "Name of variable to store the response in",
-         "group": "output",
+         "label": "Response body",
          "type": "String",
-         "value": "response_body",
+         "value": "outputResponse",
+         "binding": {
+            "type": "camunda:outputParameter",
+            "source": "${outputResponse}"
+         },
          "constraints": {
             "notEmpty": true
          },
-         "binding": {
-            "type": "camunda:outputParameter",
-            "source": "${response_body}"
-         }
+         "group": "outputs"
       },
       {
-         "label": "response headers",
-         "description": "Name of variable to store the response in",
-         "group": "output",
+         "label": "Response headers",
          "type": "String",
-         "value": "response_headers",
+         "value": "outputHeaders",
+         "binding": {
+            "type": "camunda:outputParameter",
+            "source": "${outputHeaders}"
+         },
          "constraints": {
             "notEmpty": true
          },
-         "binding": {
-            "type": "camunda:outputParameter",
-            "source": "${response_headers}"
-         }
-      },
-      {
-         "label": "response file path",
-         "description": "Name of variable to store the response in",
-         "group": "output",
-         "type": "String",
-         "value": "response_file_path",
-         "constraints": {
-            "notEmpty": true
-         },
-         "binding": {
-            "type": "camunda:outputParameter",
-            "source": "${response_file_path}"
-         }
+         "group": "outputs"
       },
       {
          "label": "Debug mode",
@@ -266,11 +214,11 @@
          "group": "debug"
       },
       {
-         "label": "Validate SSL",
+         "label": "TLS settings",
          "feel": "required",
          "binding": {
             "type": "camunda:inputParameter",
-            "name": "validateSSL"
+            "name": "tlsType"
          },
          "value": "true",
          "constraints": {
@@ -279,126 +227,29 @@
          "type": "Dropdown",
          "choices": [
             {
-               "name": "enabled",
-               "value": "true"
+               "name": "enable",
+               "value": "enable"
             },
             {
-               "name": "disabled",
-               "value": "false"
+               "name": "disable",
+               "value": "disable"
+            },
+            {
+               "name": "Two-Way SSL",
+               "value": "2waySsl"
             }
          ],
          "group": "tls"
       },
       {
-         "label": "Trusted Store type",
+         "label": "Configuration",
          "feel": "required",
          "binding": {
             "type": "camunda:inputParameter",
-            "name": "trustedStoreType"
+            "name": "tlsSettings"
          },
-         "value": "JKS",
-         "constraints": {
-            "notEmpty": true
-         },
-         "type": "Dropdown",
-         "choices": [
-            {
-               "name": "PKCS12",
-               "value": "PKCS12"
-            },
-            {
-               "name": "JKS",
-               "value": "JKS"
-            }
-         ],
-         "group": "tls"
-      },
-      {
-         "label": "Trusted Store path",
-         "type": "String",
-         "feel": "required",
-         "binding": {
-            "type": "camunda:inputParameter",
-            "name": "trustedStorePath"
-         },
-         "group": "tls"
-      },
-      {
-         "label": "Trusted Store password",
-         "type": "String",
-         "feel": "required",
-         "binding": {
-            "type": "camunda:inputParameter",
-            "name": "trustedStorePass"
-         },
-         "group": "tls"
-      },
-      {
-         "label": "Enable Two-way SSL",
-         "feel": "required",
-         "binding": {
-            "type": "camunda:inputParameter",
-            "name": "is2WaySsl"
-         },
-         "value": "false",
-         "constraints": {
-            "notEmpty": true
-         },
-         "type": "Dropdown",
-         "choices": [
-            {
-               "name": "enabled",
-               "value": "true"
-            },
-            {
-               "name": "disabled",
-               "value": "false"
-            }
-         ],
-         "group": "tls"
-      },
-      {
-         "label": "Key Store type",
-         "feel": "required",
-         "binding": {
-            "type": "camunda:inputParameter",
-            "name": "keyStoreType"
-         },
-         "value": "PKCS12",
-         "constraints": {
-            "notEmpty": true
-         },
-         "type": "Dropdown",
-         "choices": [
-            {
-               "name": "PKCS12",
-               "value": "PKCS12"
-            },
-            {
-               "name": "JKS",
-               "value": "JKS"
-            }
-         ],
-         "group": "tls"
-      },
-      {
-         "label": "Key Store path",
-         "type": "String",
-         "feel": "required",
-         "binding": {
-            "type": "camunda:inputParameter",
-            "name": "keyStorePath"
-         },
-         "group": "tls"
-      },
-      {
-         "label": "Key Store password",
-         "type": "String",
-         "feel": "required",
-         "binding": {
-            "type": "camunda:inputParameter",
-            "name": "keyStorePass"
-         },
+         "value": "",
+         "type": "Text",
          "group": "tls"
       },
       {

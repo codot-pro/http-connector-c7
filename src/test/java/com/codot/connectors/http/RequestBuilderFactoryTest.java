@@ -3,7 +3,6 @@ package com.codot.connectors.http;
 import com.codot.connectors.http.request.payload.BinaryPayload;
 import com.codot.connectors.http.request.payload.MultipartPayload;
 import com.codot.connectors.http.request.payload.Payload;
-import com.codot.connectors.http.request.payload.TextPayload;
 import com.codot.connectors.http.request.payload.multipart.MultipartFilePart;
 import com.codot.connectors.http.request.payload.multipart.MultipartPart;
 import com.codot.connectors.http.request.payload.multipart.MultipartTextPart;
@@ -101,18 +100,11 @@ public class RequestBuilderFactoryTest {
     }
 
     @Test
-    public void mappingToTextPayloadTest() throws JsonProcessingException {
+    public void mappingToTextPayloadTest() {
         Properties properties = new Properties();
         properties.put(PAYLOAD, textPayload);
 
-        Payload payload = RequestBuilderFactory.mappingPayload(properties);
-
-        assertEquals("text", payload.getType());
-        assertTrue(payload instanceof TextPayload);
-
-        TextPayload tPayload = (TextPayload) payload;
-
-        assertEquals("{ * content * }", tPayload.getText());
+        assertThrows(JsonProcessingException.class, () -> RequestBuilderFactory.mappingPayload(properties));
     }
 
     @Test

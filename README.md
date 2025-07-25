@@ -56,8 +56,7 @@ Reload the application, and you will be able to assign a template.
     - Type 'text'
       ```json
       {
-         "type": "text",
-         "text": "{ * content * }"
+         "payload": "value"
       }
       ```
 

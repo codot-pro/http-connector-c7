@@ -12,7 +12,7 @@ import static com.codot.connectors.http.HttpConnectorConstants.*;
         visible = true
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = TextPayload.class, name = PAYLOAD_TYPE_TEXT),
+        @JsonSubTypes.Type(value = String.class),
         @JsonSubTypes.Type(value = BinaryPayload.class, name = PAYLOAD_TYPE_BINARY),
         @JsonSubTypes.Type(value = MultipartPayload.class, name = PAYLOAD_TYPE_MULTIPART)
 })

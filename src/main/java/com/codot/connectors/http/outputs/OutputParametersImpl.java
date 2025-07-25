@@ -29,15 +29,13 @@ public class OutputParametersImpl implements OutputParameters{
     public OutputParametersImpl(){}
 
     @Override
-    public void save(DelegateExecution e) {
-
-        e.setVariable((String) e.getVariable(OUTPUT_VARIABLE_STATUS_CODE), statusCode);
-        e.setVariable((String) e.getVariable(OUTPUT_VARIABLE_RESPONSE_TYPE), responseType);
-
-        e.setVariable((String) e.getVariable(OUTPUT_VARIABLE_RESPONSE), response);
+    public void save(DelegateExecution execution) {
+        execution.setVariable(OUTPUT_VARIABLE_STATUS_CODE, statusCode);
+        execution.setVariable(OUTPUT_VARIABLE_RESPONSE_TYPE, responseType);
+        execution.setVariable(OUTPUT_VARIABLE_RESPONSE, response);
 
         if (headers != null)
-            e.setVariable((String) e.getVariable(OUTPUT_VARIABLE_HEADERS), S(headers, DataFormats.JSON_DATAFORMAT_NAME));
+            execution.setVariable(OUTPUT_VARIABLE_HEADERS, S(headers, DataFormats.JSON_DATAFORMAT_NAME));
     }
 
     @Override
