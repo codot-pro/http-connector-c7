@@ -3,15 +3,18 @@ package com.codot.connectors.http.ssl;
 import camundajar.impl.com.google.gson.Gson;
 import camundajar.impl.com.google.gson.GsonBuilder;
 import camundajar.impl.com.google.gson.annotations.Expose;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.nio.file.Paths;
 
+import static com.codot.connectors.http.HttpConnectorConstants.*;
+
 @Getter
-@Setter
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class StoreParams {
     private static final Gson gson = new GsonBuilder()
             .excludeFieldsWithoutExposeAnnotation()
@@ -30,12 +33,15 @@ public class StoreParams {
             OVERRIDDEN_JAVA_TRUST_STORE_PATH == null ? DEFAULT_JAVA_TRUST_STORE_PATH : OVERRIDDEN_JAVA_TRUST_STORE_PATH
     );
 
+    @JsonProperty(TLS_STORE_TYPE)
     @Expose private String type;
+    @JsonProperty(TLS_STORE_PATH)
     @Expose private String path;
-    @Expose private String pass;
+    @JsonProperty(TLS_STORE_PASSWORD)
+    @Expose private String password;
 
     public boolean isEmpty(){
-        return path == null && pass == null;
+        return path == null && password == null;
     }
 
     @Override

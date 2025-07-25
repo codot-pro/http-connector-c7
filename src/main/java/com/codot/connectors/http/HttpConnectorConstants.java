@@ -11,14 +11,14 @@ public class HttpConnectorConstants {
     public static final String DEBUG_MODE = "debugMode";
 
     public static final String SSL_TYPE = "sslType";
+    public static final String TLS_SETTINGS = "tlsSettings";
 
-    public static final String TRUSTED_STORE_TYPE = "trustedStoreType";
-    public static final String TRUSTED_STORE_PATH = "trustedStorePath";
-    public static final String TRUSTED_STORE_PASS = "trustedStorePass";
+    public static final String TLS_STORE_TYPE = "type";
+    public static final String TLS_STORE_PATH = "path";
+    public static final String TLS_STORE_PASSWORD = "password";
 
-    public static final String KEY_STORE_TYPE = "keyStoreType";
-    public static final String KEY_STORE_PATH = "keyStorePath";
-    public static final String KEY_STORE_PASS = "keyStorePass";
+    public static final String TLS_KEY_STORE = "keyStore";
+    public static final String TLS_TRUSTED_STORE = "trustedStore";
 
     // PAYLOAD_TYPE values
     public static final String PAYLOAD_TYPE_TEXT = "text";

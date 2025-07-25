@@ -39,8 +39,8 @@ public class HttpClientFactory {
         try {
             // KEY Store params
             KeyStore keyStore = KeyStore.getInstance(keyStoreParams.getType());
-            if (keyStoreParams.getPass() == null) throw new ProcessEngineException("Empty Key Store password");
-            char[] keyStorePassword = keyStoreParams.getPass().toCharArray();
+            if (keyStoreParams.getPassword() == null) throw new ProcessEngineException("Empty Key Store password");
+            char[] keyStorePassword = keyStoreParams.getPassword().toCharArray();
 
             // KEY Store init
             Path storePath = Paths.get(keyStoreParams.getPath());
@@ -52,8 +52,8 @@ public class HttpClientFactory {
 
             // TRUST Store
             Path trustedPath = Paths.get(trustedStoreParams.getPath());
-            if (keyStoreParams.getPass() == null) throw new ProcessEngineException("Empty Trust Store password");
-            char[] trustedStorePassword = trustedStoreParams.getPass().toCharArray();
+            if (keyStoreParams.getPassword() == null) throw new ProcessEngineException("Empty Trust Store password");
+            char[] trustedStorePassword = trustedStoreParams.getPassword().toCharArray();
 
             // TRUST Store init
             KeyStore trustStore = KeyStore.getInstance(trustedStoreParams.getType());
@@ -101,7 +101,7 @@ public class HttpClientFactory {
                             .secure(t -> t.sslContext(finalSslContext))
             );
         } catch (SSLException e) {
-            throw new RuntimeException(e);
+            throw new ProcessEngineException(e);
         }
     }
 

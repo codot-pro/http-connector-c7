@@ -102,7 +102,6 @@ Reload the application, and you will be able to assign a template.
             }
          ]
       }
-
       ```
 
 - Timeout
@@ -110,6 +109,34 @@ Reload the application, and you will be able to assign a template.
 - Response file name
     - Must always be specified
     - If the response is not a file, then the response will be written to the **response body**
+- TLS Settings
+    - TLS (empty settings)
+    - no TLS (empty settings)
+    - mTLS
+      ```json
+      {
+         "keyStore": {
+            "type": "PKCS12",
+            "path": "path/to/store.pfx",
+            "password": "password123"
+         },
+         "trustedStore": {
+            "type": "JKS",
+            "path": "path/to/store.jks",
+            "password": "password123"
+         }
+      }
+      ```
+      or use cacerts (trustedStore)
+      ```json
+      {
+         "keyStore": {
+            "type": "PKCS12",
+            "path": "path/to/store.pfx",
+            "password": "password123"
+         }
+      }
+      ```
 
 ### Output data
 
