@@ -22,7 +22,7 @@ public class InputParametersImpl implements InputParameters {
     @Expose private final String method;
     @Expose private final String url;
     @Expose private final String headers;
-    @Expose private final String timeout;
+    @Expose private final Integer timeout;
     @Expose private final String payload;
     @Expose private final String responseFileName;
     @Expose private final String sslType;
@@ -38,7 +38,7 @@ public class InputParametersImpl implements InputParameters {
     public InputParametersImpl(DelegateExecution execution, boolean debug) {
         method              = (String) execution.getVariable(METHOD);
         url                 = (String) execution.getVariable(URL);
-        timeout             = (String) execution.getVariable(TIMEOUT);
+        timeout             = Integer.parseInt((String) execution.getVariable(TIMEOUT));
         headers             = (String) execution.getVariable(HEADERS);
         payload             = (String) execution.getVariable(PAYLOAD);
         responseFileName    = (String) execution.getVariable(RESPONSE_FILE_NAME);
@@ -62,7 +62,6 @@ public class InputParametersImpl implements InputParameters {
         properties.put(METHOD, method);
         properties.put(URL, url);
 
-        Optional.ofNullable(timeout).ifPresent(v -> properties.put(TIMEOUT, v));
         Optional.ofNullable(headers).ifPresent(v -> properties.put(HEADERS, v));
         Optional.ofNullable(payload).ifPresent(v -> properties.put(PAYLOAD, v));
         Optional.ofNullable(responseFileName).ifPresent(v -> properties.put(RESPONSE_FILE_NAME, v));
@@ -85,6 +84,11 @@ public class InputParametersImpl implements InputParameters {
         Optional.ofNullable(trustedStorePath).ifPresent(v -> properties.put(TRUSTED_STORE_PATH, v));
 
         return properties;
+    }
+
+    @Override
+    public Integer getTimeout(){
+        return timeout;
     }
 
     public String toString() {

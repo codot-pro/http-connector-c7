@@ -1,6 +1,6 @@
 package com.codot.connectors.http.request.payload.multipart;
 
-import com.codot.connectors.http.request.payload.AbstractFilePathQualifier;
+import com.codot.connectors.http.FileContainer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Getter;
 import static com.codot.connectors.http.HttpConnectorConstants.*;
 
 @Getter
-public class MultipartFilePart extends AbstractFilePathQualifier implements MultipartPart {
+public class MultipartFilePart extends FileContainer implements MultipartPart {
     private final String type;
     private final String key;
     private final Boolean delete;

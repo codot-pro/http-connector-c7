@@ -5,4 +5,6 @@ import java.util.Properties;
 public interface InputParameters {
     Properties getRequestProperties();
     Properties getSslProperties();
+    Integer getTimeout();
+    String getExpectedFileName();
 }

@@ -51,4 +51,9 @@ public class HttpConnectorConstants {
     public static final String OUTPUT_RESPONSE_TYPE = "responseType";
     public static final String OUTPUT_RESPONSE = "response";
     public static final String OUTPUT_HEADERS = "headers";
+
+    // RESPONSE TYPE
+    public static final String OUTPUT_RESPONSE_TYPE_FILE = "file";
+    public static final String OUTPUT_RESPONSE_TYPE_JSON = "json";
+    public static final String OUTPUT_RESPONSE_TYPE_XML = "xml";
 }
