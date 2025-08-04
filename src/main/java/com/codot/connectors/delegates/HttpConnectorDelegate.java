@@ -57,7 +57,6 @@ public class HttpConnectorDelegate implements JavaDelegate {
 
         if (body != null) {
             responseHandlerFactoryProvider.getHandler(body).handle(outputParameters, inputParameters.getExpectedFileName());
-            System.out.println(9);
         }
         outputParameters.save(execution);
     }
