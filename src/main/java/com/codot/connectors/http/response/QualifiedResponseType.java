@@ -37,6 +37,10 @@ public class QualifiedResponseType {
         }
     }
 
+    public static QualifiedResponseType getFileQualifiedResponseType(){
+        return new QualifiedResponseType(OUTPUT_RESPONSE_TYPE_FILE);
+    }
+
     public boolean isFile(){
         return type.equals(OUTPUT_RESPONSE_TYPE_FILE);
     }

@@ -3,5 +3,8 @@ package com.codot.connectors.http.outputs;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 
 public interface OutputParameters {
-    void save(DelegateExecution e);
+    default void save(DelegateExecution e){
+        save(e, false);
+    }
+    void save(DelegateExecution e, boolean debug);
 }

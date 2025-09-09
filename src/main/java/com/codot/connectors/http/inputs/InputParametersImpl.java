@@ -25,6 +25,7 @@ public class InputParametersImpl implements InputParameters {
     @Expose private final Integer timeout;
     @Expose private final String payload;
     @Expose private final String responseFileName;
+    @Expose private final Boolean saveAsFile;
     @Expose private final String sslType;
 
     @Expose private final String tlsSettings;
@@ -36,6 +37,7 @@ public class InputParametersImpl implements InputParameters {
         headers             = (String) execution.getVariable(HEADERS);
         payload             = (String) execution.getVariable(PAYLOAD);
         responseFileName    = (String) execution.getVariable(RESPONSE_FILE_NAME);
+        saveAsFile          = Boolean.parseBoolean((String) execution.getVariable(SAVE_AS_FILE));
         sslType             = (String) execution.getVariable(SSL_TYPE);
         tlsSettings         = (String) execution.getVariable(TLS_SETTINGS);
 
@@ -75,6 +77,11 @@ public class InputParametersImpl implements InputParameters {
     @Override
     public String getExpectedFileName() {
         return responseFileName;
+    }
+
+    @Override
+    public boolean shouldSaveAsFile() {
+        return saveAsFile;
     }
 
     public String toString() {

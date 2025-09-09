@@ -7,13 +7,13 @@ import com.codot.connectors.http.request.payload.multipart.MultipartFilePart;
 import com.codot.connectors.http.request.payload.multipart.MultipartPart;
 import com.codot.connectors.http.request.payload.multipart.MultipartTextPart;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
 import static com.codot.connectors.http.HttpConnectorConstants.PAYLOAD;
 import static com.codot.connectors.http.HttpConnectorConstants.PAYLOAD_TYPE_MULTIPART;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RequestBuilderFactoryTest {
     String multipartPayload = """
@@ -69,8 +69,8 @@ public class RequestBuilderFactoryTest {
         MultipartPart part1 = mPayload.getParts().get(0);
         MultipartPart part3 = mPayload.getParts().get(2);
 
-        assertTrue(part1 instanceof MultipartFilePart);
-        assertTrue(part3 instanceof MultipartTextPart);
+        assertInstanceOf(MultipartFilePart.class, part1);
+        assertInstanceOf(MultipartTextPart.class, part3);
 
         MultipartFilePart filePart = (MultipartFilePart) part1;
         MultipartTextPart textPart = (MultipartTextPart) part3;
@@ -91,7 +91,7 @@ public class RequestBuilderFactoryTest {
         Payload payload = RequestBuilderFactory.mappingPayload(properties);
 
         assertEquals("binary", payload.getType());
-        assertTrue(payload instanceof BinaryPayload);
+        assertInstanceOf(BinaryPayload.class, payload);
 
         BinaryPayload bPayload = (BinaryPayload) payload;
 
