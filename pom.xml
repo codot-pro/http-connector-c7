@@ -4,12 +4,40 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <name>http-connector</name>
-    <description>«CODOT LLC» Request connector 3.0.1</description>
-    <groupId>com.codot.connectors</groupId>
+
+    <groupId>pro.codot.connectors</groupId>
     <artifactId>modern-http-connector-c7</artifactId>
     <version>3.0.1</version>
     <packaging>jar</packaging>
+
+    <name>http-connector-c7</name>
+    <description>«CODOT LLC» http-connector-c7 3.0.1</description>
+    <url>https://github.com/codot-pro/http-connector-c7</url>
+
+    <!-- LICENSE -->
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <!-- DEVELOPER INFO -->
+    <developers>
+        <developer>
+            <id>dmytro.zavorotnii</id>
+            <name>Dmytro Zavorotnii</name>
+            <email>devzavorotniydmytro@gmail.com</email>
+        </developer>
+    </developers>
+
+    <!-- SCM INFO -->
+    <scm>
+        <connection>scm:git:git://github.com/codot-pro/http-connector-c7.git</connection>
+        <developerConnection>scm:git:ssh://github.com/codot-pro/http-connector-c7.git</developerConnection>
+        <url>https://github.com/codot-pro/http-connector-c7</url>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -118,10 +146,71 @@
 
     <build>
         <plugins>
+            <!-- Spring Boot plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <!-- Generate source JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Generate Javadoc JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.3</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- GPG plugin to sign artifacts -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.8</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <!-- Distribution Management for Maven Central -->
+    <distributionManagement>
+        <repository>
+            <id>ossrh</id>
+            <name>OSSRH Release Repository</name>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <name>OSSRH Snapshot Repository</name>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

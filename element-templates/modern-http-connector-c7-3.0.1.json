@@ -1,7 +1,7 @@
 {
    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
    "name": "modern-http-connector",
-   "id": "com.codot.connectors.c7-modern-http-connector-v3.0.1",
+   "id": "pro.codot.connectors.c7-modern-http-connector-v3.0.1",
    "description": "CODOT http connector (v3.0.1)",
    "version": 1,
    "entriesVisible": false,

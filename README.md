@@ -20,15 +20,11 @@ After build, we can find .jar in ./target/ folder
 You can create a **Maven** project and add a **dependency** to run the connector
 
     <dependency>
-        <groupId>com.codot.camundaconnectors</groupId>
+        <groupId>pro.codot.camundaconnectors</groupId>
         <artifactId>modern-http-connector-c7</artifactId>
-        <version></version>
+        <version>3.0.0</version>
     </dependency>
 
-#### Start SpringBootApplication
-```bash
-mvn exec:java -Dexec.mainClass="com.codot.connectors.http.Main"
-```
 
 #### Add .jar to Camunda 7 dir
 After build, we can find .jar in ./target/ folder.
