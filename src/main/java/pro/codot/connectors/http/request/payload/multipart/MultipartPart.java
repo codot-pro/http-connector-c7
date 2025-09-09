@@ -3,7 +3,7 @@ package pro.codot.connectors.http.request.payload.multipart;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import static com.codot.connectors.http.HttpConnectorConstants.*;
+import static pro.codot.connectors.http.HttpConnectorConstants.*;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,

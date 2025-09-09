@@ -1,5 +1,6 @@
 package pro.codot.connectors.delegates;
 
+import lombok.NoArgsConstructor;
 import pro.codot.connectors.http.RequestBuilderFactory;
 import pro.codot.connectors.http.WebClientFactoryProvider;
 import pro.codot.connectors.http.inputs.InputParameters;
@@ -12,7 +13,6 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.nio.ByteBuffer;
@@ -21,19 +21,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static pro.codot.connectors.http.HttpConnectorConstants.DEBUG_MODE;
 
-@Component(value = "httpConnectorDelegate")
+@NoArgsConstructor
 public class HttpConnectorDelegate implements JavaDelegate {
     public static final Logger LOGGER = LoggerFactory.getLogger(HttpConnectorDelegate.class);
-
-    private final WebClientFactoryProvider webClientFactoryProvider;
-    private final ResponseHandlerFactoryProvider responseHandlerFactoryProvider;
-    private final ResponseHandler responseHandler;
-
-    public HttpConnectorDelegate(WebClientFactoryProvider webClientFactoryProvider, ResponseHandlerFactoryProvider responseHandlerFactoryProvider, ResponseHandler responseHandler) {
-        this.webClientFactoryProvider = webClientFactoryProvider;
-        this.responseHandlerFactoryProvider = responseHandlerFactoryProvider;
-        this.responseHandler = responseHandler;
-    }
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -44,7 +34,7 @@ public class HttpConnectorDelegate implements JavaDelegate {
 
         boolean saveAsFile = inputParameters.shouldSaveAsFile();
 
-        WebClient webClient = webClientFactoryProvider.getClient(inputParameters.getSslProperties());
+        WebClient webClient = WebClientFactoryProvider.getClient(inputParameters.getSslProperties());
         WebClient.RequestHeadersSpec<?> request = RequestBuilderFactory
                 .create(inputParameters.getRequestProperties(), webClient)
                 .build();
@@ -52,14 +42,14 @@ public class HttpConnectorDelegate implements JavaDelegate {
         AtomicReference<OutputParametersImpl> output = new AtomicReference<>(outputParameters);
 
         ByteBuffer body = request
-                .exchangeToMono(r -> responseHandler.processResponse(r, output.get()))
+                .exchangeToMono(r -> ResponseHandler.processResponse(r, output.get()))
                 .timeout(Duration.ofMillis(inputParameters.getTimeout()))
-                .doOnError(error -> responseHandler.handleError(error, output.get()))
+                .doOnError(error -> ResponseHandler.handleError(error, output.get()))
                 .block();
 
         if (body != null) {
-            responseHandlerFactoryProvider.getHandler(body, saveAsFile).handle(outputParameters, inputParameters.getExpectedFileName());
+            ResponseHandlerFactoryProvider.getHandler(body, saveAsFile).handle(outputParameters, inputParameters.getExpectedFileName());
         }
-        outputParameters.save(execution, saveAsFile);
+        outputParameters.save(execution, debug);
     }
 }

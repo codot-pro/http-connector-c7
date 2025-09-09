@@ -37,11 +37,11 @@
       {
          "label": "Implementation Type",
          "type": "Hidden",
-         "value": "${httpConnectorDelegate}",
+         "value": "pro.codot.connectors.delegates.HttpConnectorDelegate",
          "editable": false,
          "binding": {
             "type": "property",
-            "name": "camunda:delegateExpression"
+            "name": "camunda:class"
          }
       },
       {

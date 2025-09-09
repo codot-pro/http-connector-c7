@@ -2,7 +2,10 @@ package pro.codot.connectors.http.outputs;
 
 import camundajar.impl.com.google.gson.Gson;
 import camundajar.impl.com.google.gson.GsonBuilder;
+import camundajar.impl.com.google.gson.JsonParser;
 import camundajar.impl.com.google.gson.annotations.Expose;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import pro.codot.connectors.delegates.HttpConnectorDelegate;
 import pro.codot.connectors.utils.Utils;
 import lombok.Getter;
@@ -12,6 +15,9 @@ import org.camunda.spin.DataFormats;
 import org.camunda.spin.Spin;
 import org.camunda.spin.impl.json.jackson.JacksonJsonNode;
 import org.springframework.http.HttpHeaders;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static pro.codot.connectors.http.HttpConnectorConstants.*;
 import static org.camunda.spin.Spin.S;
@@ -45,6 +51,11 @@ public class OutputParametersImpl implements OutputParameters{
 
     @Override
     public String toString() {
-        return gson.toJson(this);
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("statusCode", statusCode);
+        map.put("responseType", responseType);
+        map.put("response", (response != null) ? response.toString() : null);
+        map.put("headers", headers);
+        return gson.toJson(map);
     }
 }

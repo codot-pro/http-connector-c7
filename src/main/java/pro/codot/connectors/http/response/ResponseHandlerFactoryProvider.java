@@ -3,7 +3,6 @@ package pro.codot.connectors.http.response;
 import pro.codot.connectors.http.response.impl.FileResponseHandlerImpl;
 import pro.codot.connectors.http.response.impl.JsonResponseHandlerImpl;
 import pro.codot.connectors.http.response.impl.XmlResponseHandlerImpl;
-import org.springframework.stereotype.Component;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -11,7 +10,6 @@ import java.util.Map;
 
 import static pro.codot.connectors.http.HttpConnectorConstants.*;
 
-@Component
 public class ResponseHandlerFactoryProvider {
     private static final Map<String, ResponseHandlerFactory> factories = Map.of(
             OUTPUT_RESPONSE_TYPE_FILE, new FileResponseHandlerImpl(),
@@ -19,7 +17,7 @@ public class ResponseHandlerFactoryProvider {
             OUTPUT_RESPONSE_TYPE_XML, new XmlResponseHandlerImpl()
     );
 
-    public ResponseHandlerFactory getHandler(ByteBuffer buffer, boolean saveAsFile){
+    public static ResponseHandlerFactory getHandler(ByteBuffer buffer, boolean saveAsFile){
         byte[] bytes = buffer.array();
         String response = new String(bytes, StandardCharsets.UTF_8);
         QualifiedResponseType qualifiedType = saveAsFile ?

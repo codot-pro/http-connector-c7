@@ -29,6 +29,8 @@
             <id>dmytro.zavorotnii</id>
             <name>Dmytro Zavorotnii</name>
             <email>devzavorotniydmytro@gmail.com</email>
+            <organization>CODOT LLC</organization>
+            <organizationUrl>https://codot.pro</organizationUrl>
         </developer>
     </developers>
 
@@ -41,6 +43,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
@@ -197,20 +200,28 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.8.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <!-- Distribution Management for Maven Central -->
     <distributionManagement>
-        <repository>
-            <id>ossrh</id>
-            <name>OSSRH Release Repository</name>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
         <snapshotRepository>
             <id>ossrh</id>
-            <name>OSSRH Snapshot Repository</name>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 </project>
