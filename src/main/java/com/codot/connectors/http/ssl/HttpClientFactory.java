@@ -23,9 +23,12 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.time.Duration;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HttpClientFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpClientFactory.class);
+    private static final ConcurrentHashMap<Integer, ReactorClientHttpConnector> twoWaySslCache = new ConcurrentHashMap<>();
 
     private static final ConnectionProvider provider = ConnectionProvider.builder("fixed")
             .maxConnections(1000)
@@ -35,7 +38,13 @@ public class HttpClientFactory {
             .evictInBackground(Duration.ofSeconds(120))
             .build();
 
+
     public static ReactorClientHttpConnector getClient2WaySSL(StoreParams keyStoreParams, StoreParams trustedStoreParams) {
+        int key = 31 * Objects.hashCode(keyStoreParams) + Objects.hashCode(trustedStoreParams);
+        return twoWaySslCache.computeIfAbsent(key, k -> buildClient2WaySSL(keyStoreParams, trustedStoreParams));
+    }
+
+    private static ReactorClientHttpConnector buildClient2WaySSL(StoreParams keyStoreParams, StoreParams trustedStoreParams) {
         try {
             // KEY Store params
             KeyStore keyStore = KeyStore.getInstance(keyStoreParams.getType());

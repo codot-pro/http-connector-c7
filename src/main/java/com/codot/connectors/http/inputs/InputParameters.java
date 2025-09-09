@@ -7,4 +7,5 @@ public interface InputParameters {
     Properties getSslProperties();
     Integer getTimeout();
     String getExpectedFileName();
+    boolean shouldSaveAsFile();
 }

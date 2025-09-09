@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.codot.connectors.http.HttpConnectorConstants.DEBUG_MODE;
 
-@Component
+@Component(value = "httpConnectorDelegate")
 public class HttpConnectorDelegate implements JavaDelegate {
     public static final Logger LOGGER = LoggerFactory.getLogger(HttpConnectorDelegate.class);
 
@@ -42,6 +42,8 @@ public class HttpConnectorDelegate implements JavaDelegate {
         InputParameters inputParameters = new InputParametersImpl(execution, debug);
         OutputParametersImpl outputParameters = new OutputParametersImpl();
 
+        boolean saveAsFile = inputParameters.shouldSaveAsFile();
+
         WebClient webClient = webClientFactoryProvider.getClient(inputParameters.getSslProperties());
         WebClient.RequestHeadersSpec<?> request = RequestBuilderFactory
                 .create(inputParameters.getRequestProperties(), webClient)
@@ -56,9 +58,8 @@ public class HttpConnectorDelegate implements JavaDelegate {
                 .block();
 
         if (body != null) {
-            responseHandlerFactoryProvider.getHandler(body).handle(outputParameters, inputParameters.getExpectedFileName());
-            System.out.println(9);
+            responseHandlerFactoryProvider.getHandler(body, saveAsFile).handle(outputParameters, inputParameters.getExpectedFileName());
         }
-        outputParameters.save(execution);
+        outputParameters.save(execution, saveAsFile);
     }
 }

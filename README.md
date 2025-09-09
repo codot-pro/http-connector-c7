@@ -153,4 +153,6 @@ Reload the application, and you will be able to assign a template.
 ### Debug mode
 If you enable debug mode, then in the logs you will see logs with input and output data. They will be in the format [processDefinitionKey : processDefinitionVersion : currentActivityName : processInstanceId]: { output/input variables...}
 
+# Changelog
+
 

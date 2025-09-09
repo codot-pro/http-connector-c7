@@ -3,6 +3,8 @@ package com.codot.connectors.http.outputs;
 import camundajar.impl.com.google.gson.Gson;
 import camundajar.impl.com.google.gson.GsonBuilder;
 import camundajar.impl.com.google.gson.annotations.Expose;
+import com.codot.connectors.delegates.HttpConnectorDelegate;
+import com.codot.connectors.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -29,13 +31,16 @@ public class OutputParametersImpl implements OutputParameters{
     public OutputParametersImpl(){}
 
     @Override
-    public void save(DelegateExecution execution) {
+    public void save(DelegateExecution execution, boolean debug) {
         execution.setVariable(OUTPUT_VARIABLE_STATUS_CODE, statusCode);
         execution.setVariable(OUTPUT_VARIABLE_RESPONSE_TYPE, responseType);
         execution.setVariable(OUTPUT_VARIABLE_RESPONSE, response);
 
         if (headers != null)
             execution.setVariable(OUTPUT_VARIABLE_HEADERS, S(headers, DataFormats.JSON_DATAFORMAT_NAME));
+
+        if (debug)
+            HttpConnectorDelegate.LOGGER.info(Utils.printLog(this.toString(), execution));
     }
 
     @Override

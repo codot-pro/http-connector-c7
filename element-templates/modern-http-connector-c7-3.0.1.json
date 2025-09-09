@@ -1,8 +1,8 @@
 {
    "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
    "name": "modern-http-connector",
-   "id": "com.codot.connectors.c7-modern-http-connector-v3.0",
-   "description": "CODOT http connector (v3.0.0)",
+   "id": "com.codot.connectors.c7-modern-http-connector-v3.0.1",
+   "description": "CODOT http connector (v3.0.1)",
    "version": 1,
    "entriesVisible": false,
    "appliesTo": [
@@ -37,11 +37,11 @@
       {
          "label": "Implementation Type",
          "type": "Hidden",
-         "value": "com.codot.connectors.delegates.HttpConnectorDelegate",
+         "value": "${httpConnectorDelegate}",
          "editable": false,
          "binding": {
             "type": "property",
-            "name": "camunda:class"
+            "name": "camunda:delegateExpression"
          }
       },
       {
@@ -135,6 +135,23 @@
             "type": "camunda:inputParameter",
             "name": "responseFileName"
          },
+         "group": "inputs"
+      },
+      {
+         "label": "Save as file",
+         "properties": {
+
+         },
+         "type": "Dropdown",
+         "choices": [
+            { "name": "Yes", "value": "true" },
+            { "name": "No",  "value": "false" }
+         ],
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "saveAsFile"
+         },
+         "value": "false",
          "group": "inputs"
       },
       {

@@ -19,10 +19,12 @@ public class ResponseHandlerFactoryProvider {
             OUTPUT_RESPONSE_TYPE_XML, new XmlResponseHandlerImpl()
     );
 
-    public ResponseHandlerFactory getHandler(ByteBuffer buffer){
+    public ResponseHandlerFactory getHandler(ByteBuffer buffer, boolean saveAsFile){
         byte[] bytes = buffer.array();
         String response = new String(bytes, StandardCharsets.UTF_8);
-        QualifiedResponseType qualifiedType = QualifiedResponseType.getQualifiedResponseType(response);
+        QualifiedResponseType qualifiedType = saveAsFile ?
+                QualifiedResponseType.getFileQualifiedResponseType() :
+                QualifiedResponseType.getQualifiedResponseType(response);
 
         ResponseHandlerFactory factory = factories.getOrDefault(qualifiedType.getType(), new FileResponseHandlerImpl());
 

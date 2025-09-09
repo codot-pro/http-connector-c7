@@ -8,6 +8,7 @@ public class HttpConnectorConstants {
     public static final String TIMEOUT = "timeout";
     public static final String PAYLOAD = "payload";
     public static final String RESPONSE_FILE_NAME = "responseFileName";
+    public static final String SAVE_AS_FILE = "saveAsFile";
     public static final String DEBUG_MODE = "debugMode";
 
     public static final String SSL_TYPE = "tlsType";
