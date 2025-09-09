@@ -1,5 +1,12 @@
 # Change Log
 
+## [3.0.2] - 2025-09-10
+
+### Fixed:
+- Using HttpConnectorDelegate without the @Component annotation because the Camunda property 'camunda:class' **requires a no-argument constructor**.
+- Using WebClientFactoryProvider, ResponseHandler, ResponseHandlerFactory **through static methods**.
+- Fixed an issue where **response** fields were **not converted in debug mode**.
+
 ## [3.0.1] - 2025-09-09
 
 ### Added:

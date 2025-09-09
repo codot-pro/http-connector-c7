@@ -7,11 +7,11 @@
 
     <groupId>pro.codot.connectors</groupId>
     <artifactId>modern-http-connector-c7</artifactId>
-    <version>3.0.1</version>
+    <version>3.0.2</version>
     <packaging>jar</packaging>
 
     <name>http-connector-c7</name>
-    <description>«CODOT LLC» http-connector-c7 3.0.1</description>
+    <description>«CODOT LLC» Camunda http-connector-c7</description>
     <url>https://github.com/codot-pro/http-connector-c7</url>
 
     <!-- LICENSE -->
