@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static pro.codot.connectors.http.HttpConnectorConstants.*;
@@ -26,7 +27,7 @@ public class StoreParams {
     private static final String OVERRIDDEN_JAVA_TRUST_STORE_PATH = System.getenv("JAVA_TRUST_STORE_PATH");
     private static final String DEFAULT_JAVA_TRUST_STORE_TYPE = "JKS";
     private static final String DEFAULT_JAVA_TRUST_STORE_PASSWORD = "changeit";
-    private static final String DEFAULT_JAVA_TRUST_STORE_PATH = Paths.get(System.getProperty("java.home"), "lib", "security", "cacerts").toAbsolutePath().toString();
+    private static final String DEFAULT_JAVA_TRUST_STORE_PATH = Paths.get(removeBinIfPresent(System.getProperty("java.home")), "lib", "security", "cacerts").toAbsolutePath().toString();
 
     @Getter
     private static final StoreParams defaultStore = new StoreParams(
@@ -49,5 +50,13 @@ public class StoreParams {
     @Override
     public String toString() {
         return gson.toJson(this);
+    }
+
+    private static String removeBinIfPresent(String javaHome) {
+        Path path = Paths.get(javaHome);
+        if (path.endsWith("bin")) {
+            return path.getParent().toString();
+        }
+        return javaHome;
     }
 }

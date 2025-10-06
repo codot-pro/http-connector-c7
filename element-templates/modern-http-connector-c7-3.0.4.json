@@ -1,0 +1,303 @@
+{
+   "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+   "name": "modern-http-connector",
+   "id": "pro.codot.connectors.c7-modern-http-connector-v3.0.4",
+   "description": "CODOT http connector (v3.0.4)",
+   "version": 1,
+   "entriesVisible": false,
+   "appliesTo": [
+      "bpmn:ServiceTask"
+   ],
+   "elementType": {
+      "value": "bpmn:ServiceTask"
+   },
+   "groups": [
+      {
+         "id": "inputs",
+         "label": "Input Mapping"
+      },
+      {
+         "id": "outputs",
+         "label": "Output Mapping"
+      },
+      {
+         "id": "debug",
+         "label": "Debug tools"
+      },
+      {
+         "id": "tls",
+         "label": "TLS - Settings"
+      },
+      {
+         "id": "async",
+         "label": "Asynchronous continuations"
+      }
+   ],
+   "properties": [
+      {
+         "label": "Implementation Type",
+         "type": "Hidden",
+         "value": "pro.codot.connectors.delegates.HttpConnectorDelegate",
+         "editable": false,
+         "binding": {
+            "type": "property",
+            "name": "camunda:class"
+         }
+      },
+      {
+         "label": "Method",
+         "type": "Dropdown",
+         "value": "GET",
+         "choices": [
+            {
+               "name": "POST",
+               "value": "POST"
+            },
+            {
+               "name": "GET",
+               "value": "GET"
+            },
+            {
+               "name": "DELETE",
+               "value": "DELETE"
+            },
+            {
+               "name": "PATCH",
+               "value": "PATCH"
+            },
+            {
+               "name": "PUT",
+               "value": "PUT"
+            }
+         ],
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "method"
+         },
+         "constraints": {
+            "notEmpty": true
+         },
+         "group": "inputs"
+      },
+      {
+         "label": "URL",
+         "type": "String",
+         "feel": "required",
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "url"
+         },
+         "constraints": {
+            "notEmpty": true
+         },
+         "group": "inputs"
+      },
+      {
+         "label": "Headers (JSON)",
+         "type": "Text",
+         "feel": "required",
+         "value": "{\"Content-Type\": \"application/json\"}",
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "headers"
+         },
+         "group": "inputs"
+      },
+      {
+         "label": "Timeout",
+         "type": "String",
+         "feel": "required",
+         "value": "5000",
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "timeout"
+         },
+         "constraints": {
+            "notEmpty": true
+         },
+         "group": "inputs"
+      },
+      {
+         "label": "Payload",
+         "type": "Text",
+         "feel": "required",
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "payload"
+         },
+         "group": "inputs"
+      },
+      {
+         "label": "Expected file name",
+         "type": "String",
+         "feel": "required",
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "responseFileName"
+         },
+         "group": "inputs"
+      },
+      {
+         "label": "Save as file",
+         "properties": {
+
+         },
+         "type": "Dropdown",
+         "choices": [
+            { "name": "Yes", "value": "true" },
+            { "name": "No",  "value": "false" }
+         ],
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "saveAsFile"
+         },
+         "value": "false",
+         "group": "inputs"
+      },
+      {
+         "label": "Status code",
+         "group": "outputs",
+         "type": "String",
+         "value": "outputStatusCode",
+         "constraints": {
+            "notEmpty": true
+         },
+         "binding": {
+            "type": "camunda:outputParameter",
+            "source": "${outputStatusCode}"
+         }
+      },
+      {
+         "label": "Response type",
+         "type": "String",
+         "value": "outputResponseType",
+         "binding": {
+            "type": "camunda:outputParameter",
+            "source": "${outputResponseType}"
+         },
+         "constraints": {
+            "notEmpty": true
+         },
+         "group": "outputs"
+      },
+      {
+         "label": "Response body",
+         "type": "String",
+         "value": "outputResponse",
+         "binding": {
+            "type": "camunda:outputParameter",
+            "source": "${outputResponse}"
+         },
+         "constraints": {
+            "notEmpty": true
+         },
+         "group": "outputs"
+      },
+      {
+         "label": "Response headers",
+         "type": "String",
+         "value": "outputHeaders",
+         "binding": {
+            "type": "camunda:outputParameter",
+            "source": "${outputHeaders}"
+         },
+         "constraints": {
+            "notEmpty": true
+         },
+         "group": "outputs"
+      },
+      {
+         "label": "Debug mode",
+         "feel": "required",
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "debugMode"
+         },
+         "value": "false",
+         "constraints": {
+            "notEmpty": true
+         },
+         "type": "Dropdown",
+         "choices": [
+            {
+               "name": "TRUE",
+               "value": "true"
+            },
+            {
+               "name": "FALSE",
+               "value": "false"
+            }
+         ],
+         "group": "debug"
+      },
+      {
+         "label": "TLS settings",
+         "feel": "required",
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "tlsType"
+         },
+         "value": "true",
+         "constraints": {
+            "notEmpty": true
+         },
+         "type": "Dropdown",
+         "choices": [
+            {
+               "name": "enable",
+               "value": "enable"
+            },
+            {
+               "name": "disable",
+               "value": "disable"
+            },
+            {
+               "name": "Two-Way SSL",
+               "value": "2waySsl"
+            }
+         ],
+         "group": "tls"
+      },
+      {
+         "label": "Configuration",
+         "feel": "required",
+         "binding": {
+            "type": "camunda:inputParameter",
+            "name": "tlsSettings"
+         },
+         "value": "",
+         "type": "Text",
+         "group": "tls"
+      },
+      {
+         "label": "Async before?",
+         "binding": {
+            "type": "property",
+            "name": "camunda:asyncBefore"
+         },
+         "type": "Boolean",
+         "value": false,
+         "group": "async"
+      },
+      {
+         "label": "Async after?",
+         "binding": {
+            "type": "property",
+            "name": "camunda:asyncAfter"
+         },
+         "type": "Boolean",
+         "value": false,
+         "group": "async"
+      },
+      {
+         "label": "Async exclusive?",
+         "binding": {
+            "type": "property",
+            "name": "camunda:exclusive"
+         },
+         "type": "Boolean",
+         "value": true,
+         "group": "async"
+      }
+   ]
+}

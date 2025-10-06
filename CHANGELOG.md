@@ -1,5 +1,10 @@
 # Change Log
 
+## [3.0.4] - 2025-10-06
+
+### Fixed:
+- Delete '/bin' directory when using default trusted store.
+
 ## [3.0.3] - 2025-10-06
 
 ### Fixed:
