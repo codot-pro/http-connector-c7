@@ -7,7 +7,7 @@
 
     <groupId>pro.codot.connectors</groupId>
     <artifactId>modern-http-connector-c7</artifactId>
-    <version>3.0.2</version>
+    <version>3.0.3</version>
     <packaging>jar</packaging>
 
     <name>http-connector-c7</name>

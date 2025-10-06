@@ -12,39 +12,47 @@
       <bpmn:incoming>Flow_1lialjv</bpmn:incoming>
       <bpmn:outgoing>Flow_11mb3gr</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:serviceTask id="Activity_0e5gqt5" name="Mock GET request" camunda:modelerTemplate="com.codot.connectors.c7-modern-http-connector-v3.0.0" camunda:modelerTemplateVersion="1" camunda:class="com.codot.connectors.delegates.HttpConnectorDelegate">
-      <bpmn:extensionElements>
-        <camunda:inputOutput>
-          <camunda:inputParameter name="method">GET</camunda:inputParameter>
-          <camunda:inputParameter name="headers">{"Content-Type": "application/json"}</camunda:inputParameter>
-          <camunda:inputParameter name="timeout">5000</camunda:inputParameter>
-          <camunda:inputParameter name="payload" />
-          <camunda:inputParameter name="debugMode">false</camunda:inputParameter>
-          <camunda:inputParameter name="tlsType">true</camunda:inputParameter>
-          <camunda:inputParameter name="tlsSettings" />
-          <camunda:inputParameter name="url">https://transfer.free.beeceptor.com/getXML</camunda:inputParameter>
-          <camunda:inputParameter name="responseFileName">xml.xml</camunda:inputParameter>
-          <camunda:outputParameter name="outputStatusCode">${outputStatusCode}</camunda:outputParameter>
-          <camunda:outputParameter name="outputResponseType">${outputResponseType}</camunda:outputParameter>
-          <camunda:outputParameter name="outputResponse">${outputResponse}</camunda:outputParameter>
-          <camunda:outputParameter name="outputHeaders">${outputHeaders}</camunda:outputParameter>
-        </camunda:inputOutput>
-      </bpmn:extensionElements>
-    </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_14zs1yw" sourceRef="StartEvent_1" targetRef="Activity_09of4td" />
     <bpmn:sequenceFlow id="Flow_1lialjv" sourceRef="Activity_09of4td" targetRef="Activity_0a69upd" />
-    <bpmn:serviceTask id="Activity_09of4td" camunda:modelerTemplate="pro.codot.connectors.c7-modern-http-connector-v3.0.1" camunda:modelerTemplateVersion="1" camunda:class="pro.codot.connectors.delegates.HttpConnectorDelegate">
+    <bpmn:serviceTask id="Activity_09of4td" name="MG" camunda:modelerTemplate="pro.codot.connectors.c7-modern-http-connector-v3.0.1" camunda:modelerTemplateVersion="1" camunda:class="pro.codot.connectors.delegates.HttpConnectorDelegate">
       <bpmn:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="method">GET</camunda:inputParameter>
-          <camunda:inputParameter name="headers">{"Content-Type": "application/json"}</camunda:inputParameter>
           <camunda:inputParameter name="timeout">5000</camunda:inputParameter>
-          <camunda:inputParameter name="payload" />
-          <camunda:inputParameter name="tlsType">true</camunda:inputParameter>
-          <camunda:inputParameter name="tlsSettings"></camunda:inputParameter>
-          <camunda:inputParameter name="url">https://transfer.free.beeceptor.com/getXML</camunda:inputParameter>
-          <camunda:inputParameter name="responseFileName">xml.xml</camunda:inputParameter>
           <camunda:inputParameter name="debugMode">true</camunda:inputParameter>
+          <camunda:inputParameter name="responseFileName">xlsx.xlsx</camunda:inputParameter>
+          <camunda:inputParameter name="tlsType">2waySsl</camunda:inputParameter>
+          <camunda:inputParameter name="tlsSettings">{
+   "keyStore": {
+      "type": "PKCS12",
+      "path": "/usr/local/share/ca-certificates/mg-personal.pfx",
+      "password": "123123"
+   }
+}</camunda:inputParameter>
+          <camunda:inputParameter name="url">https://tmgs.mgprofix.com/swws/swws.asmx</camunda:inputParameter>
+          <camunda:inputParameter name="method">POST</camunda:inputParameter>
+          <camunda:inputParameter name="headers">{"Content-Type":"text/xml; charset=utf-8"}</camunda:inputParameter>
+          <camunda:inputParameter name="payload">&lt;soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:web="http://sb.com.ua/webservices/"&gt;
+    &lt;soap:Header/&gt;
+    &lt;soap:Body&gt;
+        &lt;web:ExecOperation&gt;
+            &lt;web:method&gt;OperationsSummary&lt;/web:method&gt;
+            &lt;web:args&gt;
+                &lt;web:SystemId&gt;mg&lt;/web:SystemId&gt;
+                &lt;web:Language&gt;en&lt;/web:Language&gt;
+                &lt;web:LoginType&gt;1&lt;/web:LoginType&gt;
+                &lt;web:PointCode&gt;40298021&lt;/web:PointCode&gt;
+                &lt;web:UserLogin&gt;report_main&lt;/web:UserLogin&gt;
+                &lt;web:UserPassword&gt;123123&lt;/web:UserPassword&gt;
+                &lt;web:Args&gt;
+                    &lt;web:Field&gt;
+                        &lt;web:Name&gt;requestJSON&lt;/web:Name&gt;
+                        &lt;web:Value&gt;${getDataPayload}&lt;/web:Value&gt;
+                    &lt;/web:Field&gt;
+                &lt;/web:Args&gt;
+            &lt;/web:args&gt;
+        &lt;/web:ExecOperation&gt;
+    &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</camunda:inputParameter>
           <camunda:inputParameter name="saveAsFile">false</camunda:inputParameter>
           <camunda:outputParameter name="outputStatusCode">${outputStatusCode}</camunda:outputParameter>
           <camunda:outputParameter name="outputResponseType">${outputResponseType}</camunda:outputParameter>
@@ -55,54 +63,96 @@
       <bpmn:incoming>Flow_14zs1yw</bpmn:incoming>
       <bpmn:outgoing>Flow_1lialjv</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:textAnnotation id="TextAnnotation_0wbc5qo">
-      <bpmn:text>3.0.0</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_1slllks" associationDirection="None" sourceRef="Activity_0e5gqt5" targetRef="TextAnnotation_0wbc5qo" />
+    <bpmn:serviceTask id="Activity_1dwlzng" name="3.0.2" camunda:modelerTemplate="pro.codot.connectors.c7-modern-http-connector-v3.0.2" camunda:modelerTemplateVersion="1" camunda:class="pro.codot.connectors.delegates.HttpConnectorDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="timeout">5000</camunda:inputParameter>
+          <camunda:inputParameter name="responseFileName" />
+          <camunda:inputParameter name="saveAsFile">false</camunda:inputParameter>
+          <camunda:inputParameter name="method">POST</camunda:inputParameter>
+          <camunda:inputParameter name="url">https://tmgs.mgprofix.com/swws/swws.asmx</camunda:inputParameter>
+          <camunda:inputParameter name="headers">{"Content-Type":"text/xml; charset=utf-8"}</camunda:inputParameter>
+          <camunda:inputParameter name="payload">&lt;soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:web="http://sb.com.ua/webservices/"&gt;
+    &lt;soap:Header/&gt;
+    &lt;soap:Body&gt;
+        &lt;web:ExecOperation&gt;
+            &lt;web:method&gt;OperationsSummary&lt;/web:method&gt;
+            &lt;web:args&gt;
+                &lt;web:SystemId&gt;mg&lt;/web:SystemId&gt;
+                &lt;web:Language&gt;en&lt;/web:Language&gt;
+                &lt;web:LoginType&gt;1&lt;/web:LoginType&gt;
+                &lt;web:PointCode&gt;40298021&lt;/web:PointCode&gt;
+                &lt;web:UserLogin&gt;report_main&lt;/web:UserLogin&gt;
+                &lt;web:UserPassword&gt;123123&lt;/web:UserPassword&gt;
+                &lt;web:Args&gt;
+                    &lt;web:Field&gt;
+                        &lt;web:Name&gt;requestJSON&lt;/web:Name&gt;
+                        &lt;web:Value&gt;${getDataPayload}&lt;/web:Value&gt;
+                    &lt;/web:Field&gt;
+                &lt;/web:Args&gt;
+            &lt;/web:args&gt;
+        &lt;/web:ExecOperation&gt;
+    &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;</camunda:inputParameter>
+          <camunda:inputParameter name="debugMode">true</camunda:inputParameter>
+          <camunda:inputParameter name="tlsType">2waySsl</camunda:inputParameter>
+          <camunda:inputParameter name="tlsSettings">{
+   "keyStore": {
+      "type": "PKCS12",
+      "path": "/usr/local/share/ca-certificates/mg-personal.pfx",
+      "password": "123123"
+   }
+}</camunda:inputParameter>
+          <camunda:outputParameter name="outputStatusCode">${outputStatusCode}</camunda:outputParameter>
+          <camunda:outputParameter name="outputResponseType">${outputResponseType}</camunda:outputParameter>
+          <camunda:outputParameter name="outputResponse">${outputResponse}</camunda:outputParameter>
+          <camunda:outputParameter name="outputHeaders">${outputHeaders}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+    </bpmn:serviceTask>
     <bpmn:textAnnotation id="TextAnnotation_1v4mz3i">
-      <bpmn:text>3.0.1</bpmn:text>
+      <bpmn:text>3.0.2</bpmn:text>
     </bpmn:textAnnotation>
+    <bpmn:association id="Association_177s5hf" associationDirection="None" sourceRef="TextAnnotation_1v4mz3i" targetRef="Activity_09of4td" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="TestHttpConnectorTemplate">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="152" y="292" width="36" height="36" />
+        <dc:Bounds x="152" y="162" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1gz2ozn_di" bpmnElement="Event_1gz2ozn">
-        <dc:Bounds x="642" y="292" width="36" height="36" />
+        <dc:Bounds x="642" y="162" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0gtdofk_di" bpmnElement="Activity_0a69upd">
-        <dc:Bounds x="490" y="270" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1mwuacm" bpmnElement="Activity_0e5gqt5">
-        <dc:Bounds x="300" y="140" width="100" height="80" />
+        <dc:Bounds x="490" y="140" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0u68tuy_di" bpmnElement="Activity_09of4td">
-        <dc:Bounds x="290" y="270" width="100" height="80" />
+        <dc:Bounds x="290" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0wbc5qo_di" bpmnElement="TextAnnotation_0wbc5qo">
-        <dc:Bounds x="430" y="80" width="100" height="30" />
+      <bpmndi:BPMNShape id="Activity_0p9yemg_di" bpmnElement="Activity_1dwlzng">
+        <dc:Bounds x="290" y="280" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1v4mz3i_di" bpmnElement="TextAnnotation_1v4mz3i">
-        <dc:Bounds x="430" y="210" width="100" height="30" />
+        <dc:Bounds x="430" y="80" width="100" height="30" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_11mb3gr_di" bpmnElement="Flow_11mb3gr">
-        <di:waypoint x="590" y="310" />
-        <di:waypoint x="642" y="310" />
+        <di:waypoint x="590" y="180" />
+        <di:waypoint x="642" y="180" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_14zs1yw_di" bpmnElement="Flow_14zs1yw">
-        <di:waypoint x="188" y="310" />
-        <di:waypoint x="290" y="310" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1slllks_di" bpmnElement="Association_1slllks">
-        <di:waypoint x="399" y="148" />
-        <di:waypoint x="457" y="110" />
+        <di:waypoint x="188" y="180" />
+        <di:waypoint x="290" y="180" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1lialjv_di" bpmnElement="Flow_1lialjv">
-        <di:waypoint x="390" y="310" />
-        <di:waypoint x="490" y="310" />
+        <di:waypoint x="390" y="180" />
+        <di:waypoint x="490" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_177s5hf_di" bpmnElement="Association_177s5hf">
+        <di:waypoint x="463" y="110" />
+        <di:waypoint x="390" y="172" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -1,5 +1,10 @@
 # Change Log
 
+## [3.0.3] - 2025-10-06
+
+### Fixed:
+- Added @NoArgsConstructor for resolve **InvalidDefinitionException** where jackson cannot create **StoreParams** using **default constructor**. (mTLS/TwoWaySSL)
+
 ## [3.0.2] - 2025-09-10
 
 ### Fixed:
