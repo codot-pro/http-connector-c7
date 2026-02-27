@@ -35,7 +35,7 @@ public class InputParametersImpl implements InputParameters {
         url                 = (String) execution.getVariable(URL);
         timeout             = Integer.parseInt((String) execution.getVariable(TIMEOUT));
         headers             = (String) execution.getVariable(HEADERS);
-        payload             = (String) execution.getVariable(PAYLOAD);
+        payload             = Optional.ofNullable(execution.getVariable(PAYLOAD)).map(Object::toString).orElse(null);
         responseFileName    = (String) execution.getVariable(RESPONSE_FILE_NAME);
         saveAsFile          = Boolean.parseBoolean((String) execution.getVariable(SAVE_AS_FILE));
         sslType             = (String) execution.getVariable(SSL_TYPE);
