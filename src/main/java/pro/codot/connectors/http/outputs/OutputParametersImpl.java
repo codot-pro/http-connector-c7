@@ -40,10 +40,12 @@ public class OutputParametersImpl implements OutputParameters{
     public void save(DelegateExecution execution, boolean debug) {
         execution.setVariable(OUTPUT_VARIABLE_STATUS_CODE, statusCode);
         execution.setVariable(OUTPUT_VARIABLE_RESPONSE_TYPE, responseType);
-        execution.setVariable(OUTPUT_VARIABLE_RESPONSE, response);
 
         if (headers != null)
             execution.setVariable(OUTPUT_VARIABLE_HEADERS, S(headers, DataFormats.JSON_DATAFORMAT_NAME));
+
+        if (response != null)
+            execution.setVariable(OUTPUT_VARIABLE_RESPONSE, response);
 
         if (debug)
             HttpConnectorDelegate.LOGGER.info(Utils.printLog(this.toString(), execution));
@@ -54,7 +56,7 @@ public class OutputParametersImpl implements OutputParameters{
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("statusCode", statusCode);
         map.put("responseType", responseType);
-        map.put("response", (response != null) ? response.toString() : null);
+        map.put("response", response);
         map.put("headers", headers);
         return gson.toJson(map);
     }
