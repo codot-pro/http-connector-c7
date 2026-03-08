@@ -18,13 +18,7 @@ public class ResponseHandler {
         return response.bodyToMono(ByteBuffer.class);
     }
 
-    public static void handleError(Throwable error, OutputParametersImpl result) {
-        result.setResponseType(OUTPUT_RESPONSE_TYPE_JSON);
-        result.setStatusCode(500);
-        result.setResponse(S(error.getClass().getSimpleName() + ": " + error.getMessage()));
-    }
-
-    public static void handleCriticalError(Exception e, OutputParametersImpl result) {
+    public static void handleError(Throwable e, OutputParametersImpl result) {
         result.setResponseType(OUTPUT_RESPONSE_TYPE_JSON);
         result.setResponse(S(toJsonException(e.getClass().getSimpleName() + ": " + e.getMessage())));
         result.setStatusCode(e instanceof SocketTimeoutException ? 504 : 500);
