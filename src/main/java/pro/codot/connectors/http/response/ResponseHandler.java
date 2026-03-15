@@ -6,6 +6,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
+import java.util.Optional;
 
 import static pro.codot.connectors.http.HttpConnectorConstants.OUTPUT_RESPONSE_TYPE_JSON;
 import static org.camunda.spin.Spin.S;
@@ -18,11 +19,14 @@ public class ResponseHandler {
         return response.bodyToMono(ByteBuffer.class);
     }
 
-    public static void handleError(Throwable e, OutputParametersImpl result) {
+    public static void handleError(Throwable e, OutputParametersImpl result, Integer statusCode) {
+        String msg = Optional.ofNullable(e.getMessage()).orElse("Unknown error");
+
         result.setResponseType(OUTPUT_RESPONSE_TYPE_JSON);
-        result.setResponse(S(toJsonException(e.getClass().getSimpleName() + ": " + e.getMessage())));
-        result.setStatusCode(e instanceof SocketTimeoutException ? 504 : 500);
+        result.setResponse(S(toJsonException(e.getClass().getSimpleName() + ": " + msg)));
+        result.setStatusCode(statusCode);
     }
+
 
     private static String toJsonException(String message){
         return """
