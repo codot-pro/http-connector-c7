@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static pro.codot.connectors.http.HttpConnectorConstants.*;
 import static org.camunda.spin.Spin.S;
@@ -41,9 +42,7 @@ public class OutputParametersImpl implements OutputParameters{
         execution.setVariable(OUTPUT_VARIABLE_STATUS_CODE, statusCode);
         execution.setVariable(OUTPUT_VARIABLE_RESPONSE_TYPE, responseType);
         execution.setVariable(OUTPUT_VARIABLE_RESPONSE, response);
-
-        if (headers != null)
-            execution.setVariable(OUTPUT_VARIABLE_HEADERS, S(headers, DataFormats.JSON_DATAFORMAT_NAME));
+        execution.setVariable(OUTPUT_VARIABLE_HEADERS, S(Optional.ofNullable(headers).orElse(HttpHeaders.EMPTY), DataFormats.JSON_DATAFORMAT_NAME));
 
         if (debug)
             HttpConnectorDelegate.LOGGER.info(Utils.printLog(this.toString(), execution));

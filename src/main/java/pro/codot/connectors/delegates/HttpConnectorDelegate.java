@@ -14,9 +14,12 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.Exceptions;
 
+import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.time.Duration;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static pro.codot.connectors.http.HttpConnectorConstants.DEBUG_MODE;
@@ -41,15 +44,25 @@ public class HttpConnectorDelegate implements JavaDelegate {
 
         AtomicReference<OutputParametersImpl> output = new AtomicReference<>(outputParameters);
 
-        ByteBuffer body = request
-                .exchangeToMono(r -> ResponseHandler.processResponse(r, output.get()))
-                .timeout(Duration.ofMillis(inputParameters.getTimeout()))
-                .doOnError(error -> ResponseHandler.handleError(error, output.get()))
-                .block();
+        try {
+            ByteBuffer body = request
+                    .exchangeToMono(r -> ResponseHandler.processResponse(r, output.get()))
+                    .timeout(Duration.ofMillis(inputParameters.getTimeout()))
+                    .block();
+            if (body != null) {
+                ResponseHandlerFactoryProvider.getHandler(body, saveAsFile).handle(outputParameters, inputParameters.getExpectedFileName());
+            }
+        } catch (Throwable e) {
+            Throwable cause = Exceptions.unwrap(e);
 
-        if (body != null) {
-            ResponseHandlerFactoryProvider.getHandler(body, saveAsFile).handle(outputParameters, inputParameters.getExpectedFileName());
+            if (cause instanceof TimeoutException
+                    || cause instanceof SocketTimeoutException) {
+                ResponseHandler.handleError(cause, output.get(), 504);
+            } else {
+                ResponseHandler.handleError(cause, output.get(), 500);
+            }
+        } finally {
+            outputParameters.save(execution, debug);
         }
-        outputParameters.save(execution, debug);
     }
 }
